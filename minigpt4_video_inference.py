@@ -123,7 +123,7 @@ QUESTIONS = [
 
 import os
 def run(video_dir,instruction,model,vis_processor,gen_subtitles=False):
-    for video_name in os.listdir():
+    for video_name in os.listdir(video_dir):
         video_path = os.path.join(video_dir, video_name)
         print(video_path)
         answers = []
