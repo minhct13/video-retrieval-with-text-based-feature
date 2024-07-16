@@ -119,7 +119,7 @@ QUESTIONS = [
 import os
 from time import time
 def run(video_dir,instruction,model,vis_processor,gen_subtitles=False):
-    for video_name in os.listdir(video_dir):
+    for i, video_name in enumerate(os.listdir(video_dir)):
         s = time()
         video_path = os.path.join(video_dir, video_name)
         answers = []
@@ -147,7 +147,7 @@ def run(video_dir,instruction,model,vis_processor,gen_subtitles=False):
         with open(os.path.join(args.save_dir, save_path), "w+") as f:
             for answer in answers:
                 f.write(answer+"\n")
-        print(video_name, time() - s,"s")
+        print(i, video_name, time() - s,"s")
 
     return answers
 
