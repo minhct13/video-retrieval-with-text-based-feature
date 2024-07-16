@@ -108,45 +108,50 @@ def generate_subtitles(video_path):
         print("error",video_path)
         return None
     
-import os
-def run (video_path,instruction,model,vis_processor,gen_subtitles=False):
-    if gen_subtitles:
-        subtitle_path=generate_subtitles(video_path)
-    else :
-        subtitle_path=None
-    prepared_images,prepared_instruction=prepare_input(vis_processor,video_path,subtitle_path,instruction)
-    if prepared_images is None:
-        return "Video cann't be open ,check the video path again"
-    length=len(prepared_images)
-    prepared_images=prepared_images.unsqueeze(0)
-    conv = CONV_VISION.copy()
-    conv.system = ""
-    # if you want to make conversation comment the 2 lines above and make the conv is global variable
-    conv.append_message(conv.roles[0], prepared_instruction)
-    conv.append_message(conv.roles[1], None)
-    # prompt = [conv.get_prompt()]
-    prompt = [
-        "What are the main actions or activities happening in the video?",
-        "Who are the main characters or subjects appearing in the video?",
-        "What is the setting or location where the video takes place?",
-        "What objects or items are prominently featured in the video?",
-        "What is the overall mood or atmosphere of the video?",
-        "What are the characters or subjects wearing?",
-        "What time of day is it in the video?",
-        "What are the colors or lighting like in the video?",
-        "Are there any significant changes or transitions in the video?",
-        "What are the characters or subjects doing in relation to each other?",
-    ]
-    answers = model.generate(prepared_images, prompt, max_new_tokens=args.max_new_tokens, do_sample=True, lengths=[32], num_beams=1)
-    print(answers)
-    # save answer to save dir
-    pre, ext = os.path.splitext(video_path.split("/")[-1])
-    save_path = pre + ".txt"
-    with open(os.path.join(args.save_dir, save_path), "w+") as f:
-        for answer in answers:
-            f.write(answer+"\n")
+QUESTIONS = [
+    "What are the main actions or activities happening in the video?",
+    "Who are the main characters or subjects appearing in the video?",
+    "What is the setting or location where the video takes place?",
+    "What objects or items are prominently featured in the video?",
+    "What is the overall mood or atmosphere of the video?",
+    "What are the characters or subjects wearing?",
+    "What time of day is it in the video?",
+    "What are the colors or lighting like in the video?",
+    "Are there any significant changes or transitions in the video?",
+    "What are the characters or subjects doing in relation to each other?",
+]
 
-    return answers[0]
+import os
+def run(video_dir,instruction,model,vis_processor,gen_subtitles=False):
+    for video_name in os.listdir():
+        video_path = os.path.join(video_dir, video_name)
+        answers = []
+        if gen_subtitles:
+            subtitle_path=generate_subtitles(video_path)
+        else :
+            subtitle_path=None
+        for instruction in QUESTIONS:
+            prepared_images,prepared_instruction=prepare_input(vis_processor,video_path,subtitle_path,instruction)
+            if prepared_images is None:
+                return "Video cann't be open ,check the video path again"
+            length=len(prepared_images)
+            prepared_images=prepared_images.unsqueeze(0)
+            conv = CONV_VISION.copy()
+            conv.system = ""
+            # if you want to make conversation comment the 2 lines above and make the conv is global variable
+            conv.append_message(conv.roles[0], prepared_instruction)
+            conv.append_message(conv.roles[1], None)
+            prompt = [conv.get_prompt()]
+            answers.append(model.generate(prepared_images, prompt, max_new_tokens=args.max_new_tokens, do_sample=True, lengths=[32], num_beams=1)[0])
+        
+        # save answer to save dir
+        pre, ext = os.path.splitext(video_name.split("/")[-1])
+        save_path = pre + ".txt"
+        with open(os.path.join(args.save_dir, save_path), "w+") as f:
+            for answer in answers:
+                f.write(answer+"\n")
+
+    return answers
 
 
   

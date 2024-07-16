@@ -185,7 +185,7 @@ sbatch_generate*
 *.mkv
 *.srt
 # ignore text files
-*.txt
+# *.txt
 # ignore *.err and *.out
 *.err
 *.out
