@@ -126,22 +126,23 @@ def run(video_dir,instruction,model,vis_processor,gen_subtitles=False):
     for video_name in os.listdir(video_dir):
         video_path = os.path.join(video_dir, video_name)
         answers = []
-        if gen_subtitles:
-            subtitle_path=generate_subtitles(video_path)
-        else :
-            subtitle_path=None
-        prepared_images,prepared_instruction=prepare_input(vis_processor,video_path,subtitle_path,instruction)
-        if prepared_images is None:
-            return "Video cann't be open ,check the video path again"
-        length=len(prepared_images)
-        prepared_images=prepared_images.unsqueeze(0)
-        conv = CONV_VISION.copy()
-        conv.system = ""
-        # if you want to make conversation comment the 2 lines above and make the conv is global variable
-        conv.append_message(conv.roles[0], prepared_instruction)
-        conv.append_message(conv.roles[1], None)
-        prompt = [conv.get_prompt()]
-        answers.append(model.generate(prepared_images, prompt, max_new_tokens=args.max_new_tokens, do_sample=True, lengths=[length],num_beams=1)[0])
+        for instruction in QUESTIONS:
+            if gen_subtitles:
+                subtitle_path=generate_subtitles(video_path)
+            else :
+                subtitle_path=None
+            prepared_images,prepared_instruction=prepare_input(vis_processor,video_path,subtitle_path,instruction)
+            if prepared_images is None:
+                return "Video cann't be open ,check the video path again"
+            length=len(prepared_images)
+            prepared_images=prepared_images.unsqueeze(0)
+            conv = CONV_VISION.copy()
+            conv.system = ""
+            # if you want to make conversation comment the 2 lines above and make the conv is global variable
+            conv.append_message(conv.roles[0], prepared_instruction)
+            conv.append_message(conv.roles[1], None)
+            prompt = [conv.get_prompt()]
+            answers.append(model.generate(prepared_images, prompt, max_new_tokens=args.max_new_tokens, do_sample=True, lengths=[length],num_beams=1)[0])
         
         # save answer to save dir
         pre, ext = os.path.splitext(video_name.split("/")[-1])
