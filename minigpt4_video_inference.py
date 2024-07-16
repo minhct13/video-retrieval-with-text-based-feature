@@ -149,6 +149,7 @@ def run(video_dir,instruction,model,vis_processor,gen_subtitles=False):
         save_path = pre + ".txt"
         with open(os.path.join(args.save_dir, save_path), "w+") as f:
             for answer in answers:
+                print(video_name, answer)
                 f.write(answer+"\n")
 
     return answers
