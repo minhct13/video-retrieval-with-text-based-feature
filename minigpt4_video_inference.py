@@ -114,16 +114,13 @@ QUESTIONS = [
     "What is the setting or location where the video takes place?",
     "What objects or items are prominently featured in the video?",
     "What is the overall mood or atmosphere of the video?",
-    "What are the characters or subjects wearing?",
-    "What time of day is it in the video?",
-    "What are the colors or lighting like in the video?",
-    "Are there any significant changes or transitions in the video?",
-    "What are the characters or subjects doing in relation to each other?",
 ]
 
 import os
+from time import time
 def run(video_dir,instruction,model,vis_processor,gen_subtitles=False):
     for video_name in os.listdir(video_dir):
+        s = time()
         video_path = os.path.join(video_dir, video_name)
         answers = []
         for instruction in QUESTIONS:
@@ -149,8 +146,8 @@ def run(video_dir,instruction,model,vis_processor,gen_subtitles=False):
         save_path = pre + ".txt"
         with open(os.path.join(args.save_dir, save_path), "w+") as f:
             for answer in answers:
-                print(video_name, answer)
                 f.write(answer+"\n")
+        print(video_name, time() - s,"s")
 
     return answers
 
