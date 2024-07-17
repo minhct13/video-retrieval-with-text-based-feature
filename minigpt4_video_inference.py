@@ -139,7 +139,7 @@ def run(video_dir,instruction,model,vis_processor,gen_subtitles=False):
             conv.append_message(conv.roles[0], prepared_instruction)
             conv.append_message(conv.roles[1], None)
             prompt = [conv.get_prompt()]
-            answers.append(model.generate(prepared_images, prompt, max_new_tokens=args.max_new_tokens, do_sample=True, lengths=[length],num_beams=1)[0])
+            answers.append(model.generate(prepared_images, prompt, max_new_tokens=args.max_new_tokens, do_sample=True, lengths=[length],num_beams=1))
         
         # save answer to save dir
         pre, ext = os.path.splitext(video_name.split("/")[-1])
