@@ -562,7 +562,7 @@ class MiniGPT4_llama_v2(Blip2Base):
                 # stopping_criteria=stopping_criteria,
             )
             transition_scores = self.llama_model.compute_transition_scores(
-                answers.sequences, answers.scores, normalize_logits=True
+                outputs.sequences, outputs.scores, normalize_logits=True
             )
 
         answers = []
