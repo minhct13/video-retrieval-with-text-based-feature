@@ -118,8 +118,8 @@ QUESTIONS = [
 
 import os
 from time import time
-def run(video_dir,instruction,model,vis_processor,gen_subtitles=False):
-    for i, video_name in enumerate(os.listdir(video_dir)):
+def run(video_dir,instruction,model,vis_processor,gen_subtitles=False,index=0):
+    for i, video_name in enumerate(os.listdir(video_dir)[index:], start=index):
         s = time()
         video_path = os.path.join(video_dir, video_name)
         answers = []
@@ -140,12 +140,12 @@ def run(video_dir,instruction,model,vis_processor,gen_subtitles=False):
             conv.append_message(conv.roles[1], None)
             prompt = [conv.get_prompt()]
             answers.append(model.generate(prepared_images, prompt, max_new_tokens=args.max_new_tokens, do_sample=True, lengths=[length],num_beams=1))
-        
         # save answer to save dir
         pre, ext = os.path.splitext(video_name.split("/")[-1])
         save_path = pre + ".txt"
         with open(os.path.join(args.save_dir, save_path), "w+") as f:
             for answer in answers:
+                print(answer)
                 f.write(answer+"\n")
         print(i, video_name, time() - s,"s")
 
@@ -164,6 +164,7 @@ def get_arguments():
     parser.add_argument("--lora_r", type=int, default=64, help="lora rank of the model")
     parser.add_argument("--lora_alpha", type=int, default=16, help="lora alpha")
     parser.add_argument("--save_dir", type=str, default=".", help="save dir")
+    parser.add_argument("--index", type=int, default=0, help="index")
     parser.add_argument(
         "--options",
         nargs="+",
@@ -200,6 +201,7 @@ if __name__ == "__main__":
     video_path=args.video_path
     instruction=args.question
     add_subtitles=args.add_subtitles
+    index = args.index
     # setup_seeds(seed)
-    pred=run(video_path,instruction,model,vis_processor,gen_subtitles=add_subtitles)
+    pred=run(video_path,instruction,model,vis_processor,gen_subtitles=add_subtitles,index=index)
     print(pred)
