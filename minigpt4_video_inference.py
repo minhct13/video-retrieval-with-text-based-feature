@@ -140,17 +140,13 @@ def run(video_dir,instruction,model,vis_processor,gen_subtitles=False,index=0):
             conv.append_message(conv.roles[1], None)
             prompt = [conv.get_prompt()]
             answers.append(model.generate(prepared_images, prompt, max_new_tokens=args.max_new_tokens, do_sample=True, lengths=[length],num_beams=1))
-            transition_scores = model.compute_transition_scores(
-                answers.sequences, answers.scores, normalize_logits=True
-            )
-            print(transition_scores)
-        # save answer to save dir
+        
         pre, ext = os.path.splitext(video_name.split("/")[-1])
         save_path = pre + ".txt"
         with open(os.path.join(args.save_dir, save_path), "w+") as f:
-            for answer in answers:
+            for answer, prob in answers:
                 print(answer)
-                f.write(answer+"\n")
+                f.write(answer + "|" +prob + "\n")
         print(i, video_name, time() - s,"s")
 
     return answers

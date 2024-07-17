@@ -561,6 +561,9 @@ class MiniGPT4_llama_v2(Blip2Base):
                 repetition_penalty=repetition_penalty,
                 # stopping_criteria=stopping_criteria,
             )
+            transition_scores = self.llama_model.compute_transition_scores(
+                answers.sequences, answers.scores, normalize_logits=True
+            )
 
         answers = []
         for output_token in outputs:
@@ -574,7 +577,7 @@ class MiniGPT4_llama_v2(Blip2Base):
         if return_video_temporal_features:
             return answers, video_temporal_features
         else:
-            return answers
+            return answers[0], sum(transition_scores) / len(transition_scores)
 
     @torch.no_grad()
     def generate_text_only(
