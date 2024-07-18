@@ -559,14 +559,16 @@ class MiniGPT4_llama_v2(Blip2Base):
                 do_sample=do_sample,
                 temperature=temperature,
                 repetition_penalty=repetition_penalty,
+                return_dict_in_generate=True,
+                output_scores=True
                 # stopping_criteria=stopping_criteria,
             )
             transition_scores = self.llama_model.compute_transition_scores(
-                outputs.sequences, outputs.scores, normalize_logits=True
+                answers.sequences, answers.scores, normalize_logits=True
             )
 
         answers = []
-        for output_token in outputs:
+        for output_token in outputs.sequences:
             if output_token[0] == 0:
                 output_token = output_token[1:]
             output_texts = self.llama_tokenizer.decode(output_token, skip_special_tokens=True)
