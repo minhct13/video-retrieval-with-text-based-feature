@@ -566,7 +566,7 @@ class MiniGPT4_llama_v2(Blip2Base):
             transition_scores = self.llama_model.compute_transition_scores(
                 outputs.sequences, outputs.scores, normalize_logits=True
             ).cpu()
-            print(float(np.sum(np.exp(transition_scores.numpy()))))
+            # print(float(np.sum(np.exp(transition_scores.numpy()))))
 
         answers = []
         for output_token in outputs.sequences:
