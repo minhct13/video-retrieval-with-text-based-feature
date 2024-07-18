@@ -146,7 +146,7 @@ def run(video_dir,instruction,model,vis_processor,gen_subtitles=False,index=0):
         with open(os.path.join(args.save_dir, save_path), "w+") as f:
             for answer, prob in answers:
                 print(answer)
-                f.write(answer + "|" +prob + "\n")
+                f.write(answer + "|" + str(float(prob)) + "\n")
         print(i, video_name, time() - s,"s")
 
     return answers
