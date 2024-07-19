@@ -122,6 +122,10 @@ def run(video_dir,instruction,model,vis_processor,gen_subtitles=False,index=0):
     for i, video_name in enumerate(os.listdir(video_dir)[index:], start=index):
         s = time()
         video_path = os.path.join(video_dir, video_name)
+        pre, ext = os.path.splitext(video_name.split("/")[-1])
+        save_path = pre + ".txt"
+        if os.path.exists(os.path.join(args.save_dir, save_path)):
+            continue
         answers = []
         for instruction in QUESTIONS:
             if gen_subtitles:
@@ -141,8 +145,6 @@ def run(video_dir,instruction,model,vis_processor,gen_subtitles=False,index=0):
             prompt = [conv.get_prompt()]
             answers.append(model.generate(prepared_images, prompt, max_new_tokens=args.max_new_tokens, do_sample=True, lengths=[length],num_beams=1))
         
-        pre, ext = os.path.splitext(video_name.split("/")[-1])
-        save_path = pre + ".txt"
         with open(os.path.join(args.save_dir, save_path), "w+") as f:
             for answer, prob in answers:
                 # print(answer)
