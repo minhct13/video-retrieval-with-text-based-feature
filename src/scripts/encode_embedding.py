@@ -15,3 +15,6 @@ if __name__ == "__main__":
     for video_name in os.listdir(args.video_dir):
         video_path = os.path.join(args.video_dir, video_name)
         embedding_vector = es.encode(args.video_dir, args.text)
+        break
+
+# python scripts/encode_embedding.py  --video_dir ../data/archive/TrainValVideo/ --checkpoint ../pretrain_clipvip_base_16.pt --text "The TV screens tennis"
