@@ -1,10 +1,9 @@
-import os
 import av
 import torch
 from torch.nn import functional as F
 import numpy as np
 from easydict import EasyDict as edict
-import argparse
+
 
 from transformers.models.clip.configuration_clip import CLIPConfig, CLIPTextConfig, CLIPVisionConfig
 from transformers import CLIPProcessor, CLIPTokenizerFast, AutoProcessor
@@ -90,11 +89,3 @@ class EncoderService:
                 print(f"Cosine Similarity for: {sim.item()}")
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Process MP4 files to obtain embeddings and compute cosine similarity with text.")
-    parser.add_argument("--video_dir", type=str, required=True, help="Directory containing MP4 video files.")
-    parser.add_argument("--checkpoint", type=str, required=True, help="Path to the model checkpoint.")
-    parser.add_argument("--text", type=str, required=True, help="Text to compute embeddings for.")
-    
-    args = parser.parse_args()
-    es = EncoderService(args.checkpoint).encode(args.video_dir, args.text)
