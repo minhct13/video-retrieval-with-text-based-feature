@@ -210,3 +210,6 @@ yarl==1.9.4
 youtube-dl==2021.12.17
 yt-dlp
 zipp
+psycopg2-binary
+pgvector
+flask_sqlalchemy

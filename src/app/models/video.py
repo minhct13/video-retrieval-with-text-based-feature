@@ -1,12 +1,13 @@
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 import uuid
-from enum import Enum
-from datetime import datetime
-from app.models import db
 from pgvector.sqlalchemy import Vector
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:1234@localhost/videodb'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
 
 class Video(db.Model):
     __tablename__ = 'videos'
@@ -28,10 +29,10 @@ class Video(db.Model):
 
     def __repr__(self):
         return f"<Video {self.name}>"
-    
-@app.before_first_request
-def create_tables():
-    db.create_all()
+
+# @app.before_first_request
+# def create_tables():
+#     db.create_all()
 
 if __name__ == '__main__':
     app.run(debug=True)
