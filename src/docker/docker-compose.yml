@@ -1,0 +1,25 @@
+version: "3.7"
+
+name: "video"
+
+services:
+  backend:
+    build:
+      context: ..
+      network: host
+      dockerfile: docker/Dockerfile
+    image: backend
+    container_name: backend
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    restart: unless-stopped
+    env_file: .env
+    networks:
+      - host
+    volumes:
+        - ../:/src
+
+networks:
+  host:
+    name: host
+    external: true
