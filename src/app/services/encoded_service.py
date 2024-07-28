@@ -11,10 +11,7 @@ from clipvip.CLIP_VIP import CLIPModel, clip_loss
 
 
 class EncoderService:
-    def __init__(
-            self,
-            checkpoint=""
-        ) -> None:
+    def init_app(self, checkpoint=""):
         self.extraCfg = edict({
             "type": "ViP",
             "temporal_size": 12,
@@ -32,6 +29,7 @@ class EncoderService:
         self.clipconfig.vision_additional_config = self.extraCfg
         self.model = CLIPModel(config=self.clipconfig).to(self.device)
         self.model.load_state_dict(self.cleanDict)
+
 
     def read_video_pyav(self, container, indices):
         frames = []
