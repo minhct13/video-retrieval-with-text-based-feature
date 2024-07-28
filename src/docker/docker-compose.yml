@@ -6,7 +6,7 @@ services:
   backend:
     build:
       context: ..
-      network: host
+      # network: host
       dockerfile: docker/Dockerfile
     image: backend
     container_name: backend
@@ -14,12 +14,12 @@ services:
       - ${APP_PORT}:${APP_PORT}
     restart: unless-stopped
     env_file: .env
-    networks:
-      - host
+    # networks:
+    #   - host
     volumes:
         - ../:/src
 
-networks:
-  host:
-    name: host
-    external: true
+# networks:
+#   host:
+#     name: host
+#     external: true

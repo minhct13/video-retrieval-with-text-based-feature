@@ -6,7 +6,6 @@ EXPOSE 8002
 
 # Keeps Python from generating .pyc files in the container 
 ENV PYTHONDONTWRITEBYTECODE=1
-
 # Turns off buffering for easier container logging 
 ENV PYTHONUNBUFFERED=1
 
@@ -18,7 +17,7 @@ RUN set -x \
 
 # COPY .docker/environments/staging/local-repository-config local-repository-config
 # RUN cat local-repository-config > /etc/apt/sources.list
-RUN apt-get update && apt-get install -y 
+RUN apt-get update && apt-get install -y dos2unix && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
 # COPY .docker/environments/staging/pip.conf /etc/pip.conf

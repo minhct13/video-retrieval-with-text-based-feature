@@ -82,6 +82,7 @@ class Config():
     )
 
     BING_API_KEY = environ["BING_API_KEY"]
+    CHECKPOINT_PATH = environ["CHECKPOINT_PATH"]
 
 class DevelopmentConfig(Config):
     MINIO_SECURE = False

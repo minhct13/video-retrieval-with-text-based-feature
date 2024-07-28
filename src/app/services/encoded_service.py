@@ -22,16 +22,16 @@ class EncoderService:
             "logit_scale_init_value": 4.60,
             "add_cls_num": 3
         })
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         # Load the checkpoint from the specified path
-        self.checkpoint = torch.load(checkpoint)
+        self.checkpoint = torch.load(checkpoint, map_location=self.device)
         self.cleanDict = {key.replace("clipmodel.", ""): value for key, value in self.checkpoint.items()}
         self.tokenizer = CLIPTokenizerFast.from_pretrained("openai/clip-vit-base-patch16")
         # Load and configure the pre-trained CLIP model
         self.clipconfig = CLIPConfig.from_pretrained("openai/clip-vit-base-patch16")
         self.clipconfig.vision_additional_config = self.extraCfg
-        self.model = CLIPModel(config=self.clipconfig)
+        self.model = CLIPModel(config=self.clipconfig).to(self.device)
         self.model.load_state_dict(self.cleanDict)
-
 
     def read_video_pyav(self, container, indices):
         frames = []
@@ -87,5 +87,31 @@ class EncoderService:
             with torch.no_grad():
                 sim = F.cosine_similarity(textOutput, video_embedding, dim=1)
                 print(f"Cosine Similarity for: {sim.item()}")
+    
+    def encode_text(self, text):
+        # Tokenize the text input
+        tokens = self.tokenizer([text], padding=True, return_tensors="pt").to(self.device)
+        with torch.no_grad():
+            textOutput = self.model.get_text_features(**tokens)
+        return textOutput.cpu().numpy()
 
+    def encode_video(self, video_path):
+        # Process video file from the video_path
+        processor = AutoProcessor.from_pretrained("microsoft/xclip-base-patch16")
+        if video_path.endswith(".mp4"):
+            container = av.open(video_path)
+            clip_len = 12
+            fcount = container.streams.video[0].frames
+            indices = self.sample_frame_indices(clip_len=clip_len, frame_sample_rate=fcount//clip_len, seg_len=fcount)
+            video = self.read_video_pyav(container, indices)
+            pixel_values = processor(videos=list(video), return_tensors="pt").pixel_values.to(self.device)
+            inputs = {
+                "if_norm": True,
+                "pixel_values": pixel_values
+            }
+
+            with torch.no_grad():
+                frame_features = self.model.get_image_features(**inputs)
+            video_embedding = frame_features.mean(dim=0, keepdim=True).cpu().numpy()
+        return video_embedding
 
