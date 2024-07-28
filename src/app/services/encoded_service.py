@@ -93,7 +93,7 @@ class EncoderService:
         tokens = self.tokenizer([text], padding=True, return_tensors="pt").to(self.device)
         with torch.no_grad():
             textOutput = self.model.get_text_features(**tokens)
-        return textOutput.cpu().numpy()
+        return textOutput.cpu().numpy().flatten()
 
     def encode_video(self, video_path):
         # Process video file from the video_path
@@ -112,6 +112,6 @@ class EncoderService:
 
             with torch.no_grad():
                 frame_features = self.model.get_image_features(**inputs)
-            video_embedding = frame_features.mean(dim=0, keepdim=True).cpu().numpy()
+            video_embedding = frame_features.mean(dim=0, keepdim=True).cpu().numpy().flatten()
         return video_embedding
 

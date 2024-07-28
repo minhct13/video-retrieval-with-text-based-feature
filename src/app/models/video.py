@@ -12,7 +12,7 @@ db = SQLAlchemy(app)
 class Video(db.Model):
     __tablename__ = 'videos'
 
-    id = db.Column(db.String(200), primary_key=True, default=lambda: str(uuid.uuid4()))
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, unique=True, index=True, nullable=False)
     path = db.Column(db.String, unique=True, nullable=False)
     video_vector = db.Column(Vector(512), nullable=False)
