@@ -21,8 +21,6 @@ worker_connections = 1000
 accesslog = "-" if ENVIRONMENT_DEBUG else "/var/log/gunicorn.access.log"
 # Error log - records Gunicorn server goings-on
 errorlog = "-" if ENVIRONMENT_DEBUG else "/var/log/gunicorn.error.log"
-
-
 capture_output = True
 
 loglevel="info"
