@@ -17,4 +17,4 @@ class VideoService:
         
         # text_embedding = es.extract(text)
 
-        return res, requests.codes.ok
+        return "ok", requests.codes.ok

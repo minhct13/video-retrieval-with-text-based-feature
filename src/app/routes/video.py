@@ -12,6 +12,7 @@ def query():
     body = request.get_json()
     queries = body.get("query", None)
     if not queries:
-        return None, requests.codes.ok
+        return "", requests.codes.ok
     res, code = VideoService().query()
-    return res, code
+    
+    return res, 200
