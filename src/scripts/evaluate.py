@@ -40,6 +40,39 @@ class TextVideoDataset(Dataset):
             probs = [float(line.rsplit('|', 1)[1].strip()) for line in lines]
         return texts, probs
 
+def aggregate_vectors(video_vector, text_vectors, text_probs, video_weight=60, text_weight=40):
+    """
+    Aggregate the video vector with text vectors based on given weights.
+
+    Args:
+        video_vector (np.ndarray): The video vector.
+        text_vectors (list of np.ndarray): List of text vectors.
+        text_probs (list of float): List of text probabilities.
+        video_weight (float): Weight for the video vector.
+        text_weight (float): Weight for the text vectors.
+
+    Returns:
+        np.ndarray: Aggregated vector.
+    """
+    # Convert text_vectors and text_probs to numpy arrays
+    text_vectors = np.array(text_vectors)
+    text_probs = np.array(text_probs)
+    
+    # Normalize text_probs to sum up to 1
+    text_probs = text_probs / np.sum(text_probs)
+    
+    # Compute weighted text vector
+    weighted_text_vector = np.sum(text_vectors * text_probs[:, np.newaxis], axis=0)
+    
+    # Normalize the weights
+    video_weight = video_weight / 100
+    text_weight = text_weight / 100
+    
+    # Compute final aggregated vector
+    aggregated_vector = video_weight * video_vector + text_weight * weighted_text_vector
+    
+    return aggregated_vector
+
 # Initialize the database connection
 DATABASE_URI = 'postgresql://user:user@localhost:5432/postgres'
 engine = sqlalchemy.create_engine(DATABASE_URI)
@@ -51,13 +84,12 @@ def load_ground_truth(file_path):
     video_ids = df['video_id'].tolist()
     return video_ids
 
-def compute_similarity_matrix(text_embeddings, video_embeddings):
-    return cosine_similarity(text_embeddings, video_embeddings)
-
 def compute_metrics(similarity_matrix, ground_truth_indices):
+    # Get sorted indices based on similarity scores (highest scores first)
     sorted_indices = np.argsort(-similarity_matrix, axis=1)
+    # Find the rank of the correct match for each query
     matches = np.array([np.where(sorted_indices[i] == ground_truth_indices[i])[0][0] for i in range(len(ground_truth_indices))])
-    
+    # Calculate recall metrics
     r1 = float(np.sum(matches == 0)) / len(matches)
     r5 = float(np.sum(matches < 5)) / len(matches)
     r10 = float(np.sum(matches < 10)) / len(matches)
@@ -79,8 +111,8 @@ if __name__ == "__main__":
     
     video_files = [os.path.join(args.video_dir, f) for f in os.listdir(args.video_dir) if f.endswith(".mp4")]
 
+    futures = []
     with ThreadPoolExecutor() as executor:
-        futures = []
         for video_path in video_files:
             text_path = os.path.join(args.text_dir, os.path.basename(video_path).replace(".mp4", ".txt"))
             if not os.path.exists(text_path):
@@ -94,23 +126,30 @@ if __name__ == "__main__":
                 executor.submit(
                     process_video,
                     es,
-                    session,
                     video_path,
                     text_vectors,
                     text_probs
                 )
             )
 
-    # Ensure all futures are completed
+    # Collect results
+    video_vectors = []
+    text_embeddings = []
+    text_embeddings_list = []
+    
     for future in futures:
-        future.result()
+        video_vector, text_vector, text_probs = future.result()
+        aggregated_vector = aggregate_vectors(video_vector, text_vector, text_probs)
+        video_vectors.append(aggregated_vector)
+        text_embeddings_list.extend(text_vector)
 
-    # Load embeddings and compute metrics
+    # Convert lists to numpy arrays
+    video_embeddings = np.array(video_vectors)
+    text_embeddings = np.array(text_embeddings_list)
+
+    # Load ground truth and compute similarity
     ground_truth = load_ground_truth(args.ground_truth_file)
-    text_embeddings = np.array([text_vector for future in futures for text_vector in future.result()[2]])
-    video_embeddings = np.array([future.result()[1] for future in futures])
-
-    sim_matrix = compute_similarity_matrix(text_embeddings, video_embeddings)
+    sim_matrix = cosine_similarity(text_embeddings, video_embeddings)
 
     # Assuming each video has 5 corresponding text queries in the ground truth
     ground_truth_indices = np.array([i // 5 for i in range(5 * len(video_embeddings))])
