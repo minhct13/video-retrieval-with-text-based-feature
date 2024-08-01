@@ -165,7 +165,7 @@ jobs/logs/
 *.out
 *ipynb
 .history/
-*.json
+# *.json
 # *.sh
 .ipynb_common
 logs/
@@ -191,7 +191,7 @@ sbatch_generate*
 *.out
 *.pth
 *.pt
-*.json
+# *.json
 # ignore workspace folder
 workspace/*
 flagged/*
