@@ -12,9 +12,9 @@ function ListVideo(props) {
                         <div className={styles.item} key={index}>
                             <VideoItem
                                 link={el.link}
+                                title = {el.title}
                             />
                         </div>
-
                     ))
                 }
             </div>

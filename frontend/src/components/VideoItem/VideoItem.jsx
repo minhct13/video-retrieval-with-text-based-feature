@@ -3,7 +3,7 @@ import ReactPlayer from 'react-player'
 import styles from './VideoItem.module.css'
 
 function VideoItem(props) {
-    const { link } = props
+    const { link, title } = props
     return (
         <div className={styles.videoItem}>
             <ReactPlayer
@@ -13,6 +13,9 @@ function VideoItem(props) {
                 playing={false}
                 controls={true}
             />
+            <div>
+                <p className={styles.title}>{title}</p>
+            </div>
         </div>
     )
 }

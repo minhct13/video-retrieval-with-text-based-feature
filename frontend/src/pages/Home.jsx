@@ -1,5 +1,6 @@
 import Introduction from '../components/Introduction/Introduction'
 import ListVideo from '../components/ListVideo/ListVideo'
+import ListSuggestion from '../components/Suggestion/ListSuggestion'
 import styles from './Home.module.css'
 
 function Home() {
@@ -46,6 +47,7 @@ function Home() {
             <ListVideo
                 videos={fakeData}
             />
+            <ListSuggestion />
         </div>
     )
 }

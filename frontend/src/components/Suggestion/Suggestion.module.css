@@ -1,0 +1,40 @@
+.listSugest {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.sugestItem {
+    width: 25%;
+    height: auto;
+}
+
+.item {
+    border: 1px solid hsla(0, 0%, 100%, .1);
+    border-radius: 1rem;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: .75rem;
+    cursor: pointer;
+    color: rgba(155, 155, 155, 1);
+    transition: 0.4s;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.itemContainer>p {
+    text-align: left;
+    margin: 0;
+    font-size: 14px;
+
+}
+
+.item:hover {
+    background-color: #2f2f2f;
+    transition: 0.4s;
+}

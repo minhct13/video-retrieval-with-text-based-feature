@@ -1,3 +1,8 @@
 .videoItem{
     margin-bottom: 1rem;
 }
+.title{
+    text-align: left;
+    margin-top: 0;
+    color: rgba(155,155,155,1);
+}
