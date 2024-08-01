@@ -49,21 +49,6 @@ def load_ground_truth(file_path):
         data = json.load(f)
     return data
 
-def compute_metrics(similarity_matrix, ground_truth_indices):
-    # Get sorted indices based on similarity scores (highest scores first)
-    sorted_indices = np.argsort(-similarity_matrix, axis=1)
-    print(sorted_indices)
-    # Find the rank of the correct match for each query
-    matches = np.array([np.where(sorted_indices[i] == ground_truth_indices[i])[0][0] for i in range(len(sorted_indices))])
-    
-    # Calculate recall metrics
-    r1 = float(np.sum(matches == 0)) / len(matches)
-    r5 = float(np.sum(matches < 5)) / len(matches)
-    r10 = float(np.sum(matches < 10)) / len(matches)
-    medr = np.median(matches) + 1
-    meanr = np.mean(matches) + 1
-    
-    return r1, r5, r10, medr, meanr
 
 def fetch_video_data(session):
     videos = session.query(Video).all()
@@ -136,8 +121,31 @@ if __name__ == "__main__":
     ground_truth_video_indices = np.array([pair[0] for pair in ground_truth_pairs])
     ground_truth_text_indices = np.array([pair[1] for pair in ground_truth_pairs])
 
-    # Compute similarity matrix between video embeddings and text embeddings
+   # Compute similarity matrix between video embeddings and text embeddings
     sim_matrix = cosine_similarity(text_embeddings, video_embeddings)
+
+    # Ensure all indices are within bounds
+    max_index = sim_matrix.shape[1] - 1
+    out_of_bounds_indices = [idx for idx in ground_truth_video_indices if idx > max_index]
+    if out_of_bounds_indices:
+        print(f"Out of bounds indices found: {out_of_bounds_indices}")
+        exit()
+
+    def compute_metrics(similarity_matrix, ground_truth_indices):
+        # Get sorted indices based on similarity scores (highest scores first)
+        sorted_indices = np.argsort(-similarity_matrix, axis=1)
+        # Find the rank of the correct match for each query
+        print(sorted_indices.shape, ground_truth_indices.shape)
+        matches = np.array([np.where(sorted_indices[i] == ground_truth_indices[i])[0][0] for i in range(len(sorted_indices))])
+        
+        # Calculate recall metrics
+        r1 = float(np.sum(matches == 0)) / len(matches)
+        r5 = float(np.sum(matches < 5)) / len(matches)
+        r10 = float(np.sum(matches < 10)) / len(matches)
+        medr = np.median(matches) + 1
+        meanr = np.mean(matches) + 1
+        
+        return r1, r5, r10, medr, meanr
 
     # Compute metrics
     v2tr1, v2tr5, v2tr10, v2tmedr, v2tmeanr = compute_metrics(sim_matrix.T, ground_truth_video_indices)
@@ -145,5 +153,4 @@ if __name__ == "__main__":
 
     print(f"Video-to-Text R@1: {v2tr1}, R@5: {v2tr5}, R@10: {v2tr10}, MedR: {v2tmedr}, MeanR: {v2tmeanr}")
     print(f"Text-to-Video R@1: {t2vr1}, R@5: {t2vr5}, R@10: {t2vr10}, MedR: {t2vmedr}, MeanR: {t2vmeanr}")
-
 # python scripts/compute_metrics.py --ground_truth_file ../data/video_retrieval/msrvtt/train_7k.json --checkpoint ../pretrain_clipvip_base_16.pt
