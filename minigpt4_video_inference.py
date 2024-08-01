@@ -133,7 +133,7 @@ def save_to_json(args, save_path, video_name, answers):
 
 import os
 from time import time
-def run(video_dir, instruction, model, vis_processor, gen_subtitles=False, index=0):
+def run(video_dir, instruction, model, vis_processor, gen_subtitles=False, index=0, json_file_path=None):
     QUESTIONS = [
         "What are the main actions or activities happening in the video?",
         "Who are the main characters or subjects appearing in the video?",
@@ -142,7 +142,19 @@ def run(video_dir, instruction, model, vis_processor, gen_subtitles=False, index
         "What is the overall mood or atmosphere of the video?"
     ]
     
+    # Load the JSON file to get the list of videos to process
+    if json_file_path:
+        with open(json_file_path, "r") as f:
+            video_data = json.load(f)
+        
+        video_names_to_process = set(video_data.keys())
+    else:
+        video_names_to_process = set(os.listdir(video_dir))
+    
     for i, video_name in enumerate(os.listdir(video_dir)[index:], start=index):
+        if video_name not in video_names_to_process:
+            continue
+        
         s = time()
         video_path = os.path.join(video_dir, video_name)
         pre, ext = os.path.splitext(video_name)
@@ -192,6 +204,8 @@ def get_arguments():
     parser.add_argument("--lora_alpha", type=int, default=16, help="lora alpha")
     parser.add_argument("--save_dir", type=str, default=".", help="save dir")
     parser.add_argument("--index", type=int, default=0, help="index")
+    parser.add_argument("--json_file_path", type=str, default="", help="json_file_path")
+    
     parser.add_argument(
         "--options",
         nargs="+",
@@ -229,6 +243,6 @@ if __name__ == "__main__":
     instruction=args.question
     add_subtitles=args.add_subtitles
     index = args.index
+    json_file_path=args.json_file_path
     # setup_seeds(seed)
-    pred=run(video_path,instruction,model,vis_processor,gen_subtitles=add_subtitles,index=index)
-    print(pred)
+    pred=run(video_path,instruction,model,vis_processor,gen_subtitles=add_subtitles,index=index,json_file_path=json_file_path)
