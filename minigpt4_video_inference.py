@@ -116,40 +116,77 @@ QUESTIONS = [
     "What is the overall mood or atmosphere of the video?",
 ]
 
+def save_to_json(args, save_path, video_name, answers):
+    # Create a dictionary structure for JSON
+    data = {
+        video_name: [{"answer": answer, "prob": float(prob)} for answer, prob in answers]
+    }
+    
+    # Define the full path to the JSON file
+    full_path = os.path.join(args.save_dir, save_path)
+    
+    # Write data to the JSON file
+    with open(full_path, "w") as f:
+        json.dump(data, f, indent=4)
+    
+    print(f"Saved data for {video_name} to {full_path}")
+
 import os
 from time import time
-def run(video_dir,instruction,model,vis_processor,gen_subtitles=False,index=0):
+def run(video_dir, instruction, model, vis_processor, gen_subtitles=False, index=0, json_file_path=None):
+    QUESTIONS = [
+        "What are the main actions or activities happening in the video?",
+        "Who are the main characters or subjects appearing in the video?",
+        "What is the setting or location where the video takes place?",
+        "What objects or items are prominently featured in the video?",
+        "What is the overall mood or atmosphere of the video?"
+    ]
+    
+    # Load the JSON file to get the list of videos to process
+    if json_file_path:
+        with open(json_file_path, "r") as f:
+            video_data = json.load(f)
+        
+        video_names_to_process = set(video_data.keys())
+    else:
+        video_names_to_process = set(os.listdir(video_dir))
+    
     for i, video_name in enumerate(os.listdir(video_dir)[index:], start=index):
+        if video_name not in video_names_to_process:
+            continue
+        
         s = time()
         video_path = os.path.join(video_dir, video_name)
-        pre, ext = os.path.splitext(video_name.split("/")[-1])
-        save_path = pre + ".txt"
+        pre, ext = os.path.splitext(video_name)
+        save_path = pre + ".json"
+        
         if os.path.exists(os.path.join(args.save_dir, save_path)):
             continue
+        
         answers = []
-        for instruction in QUESTIONS:
+        for question in QUESTIONS:
             if gen_subtitles:
-                subtitle_path=generate_subtitles(video_path)
-            else :
-                subtitle_path=None
-            prepared_images,prepared_instruction=prepare_input(vis_processor,video_path,subtitle_path,instruction)
+                subtitle_path = generate_subtitles(video_path)
+            else:
+                subtitle_path = None
+            
+            prepared_images, prepared_instruction = prepare_input(vis_processor, video_path, subtitle_path, question)
             if prepared_images is None:
-                return "Video cann't be open ,check the video path again"
-            length=len(prepared_images)
-            prepared_images=prepared_images.unsqueeze(0)
+                return "Video can't be opened, check the video path again"
+            
+            length = len(prepared_images)
+            prepared_images = prepared_images.unsqueeze(0)
             conv = CONV_VISION.copy()
             conv.system = ""
-            # if you want to make conversation comment the 2 lines above and make the conv is global variable
+            # If you want to make conversation, comment the 2 lines above and make the conv a global variable
             conv.append_message(conv.roles[0], prepared_instruction)
             conv.append_message(conv.roles[1], None)
             prompt = [conv.get_prompt()]
-            answers.append(model.generate(prepared_images, prompt, max_new_tokens=args.max_new_tokens, do_sample=True, lengths=[length],num_beams=1))
+            result = model.generate(prepared_images, prompt, max_new_tokens=args.max_new_tokens, do_sample=True, lengths=[length], num_beams=1)
+            answers.append(result)
         
-        with open(os.path.join(args.save_dir, save_path), "w+") as f:
-            for answer, prob in answers:
-                # print(answer)
-                f.write(answer + "|" + str(float(prob)) + "\n")
-        print(i, video_name, time() - s,"s")
+        save_to_json(args, save_path, video_name, answers)
+        print(i, video_name, time() - s, "s")
 
     return answers
 
@@ -167,6 +204,8 @@ def get_arguments():
     parser.add_argument("--lora_alpha", type=int, default=16, help="lora alpha")
     parser.add_argument("--save_dir", type=str, default=".", help="save dir")
     parser.add_argument("--index", type=int, default=0, help="index")
+    parser.add_argument("--json_file_path", type=str, default="", help="json_file_path")
+    
     parser.add_argument(
         "--options",
         nargs="+",
@@ -204,6 +243,6 @@ if __name__ == "__main__":
     instruction=args.question
     add_subtitles=args.add_subtitles
     index = args.index
+    json_file_path=args.json_file_path
     # setup_seeds(seed)
-    pred=run(video_path,instruction,model,vis_processor,gen_subtitles=add_subtitles,index=index)
-    print(pred)
+    pred=run(video_path,instruction,model,vis_processor,gen_subtitles=add_subtitles,index=index,json_file_path=json_file_path)

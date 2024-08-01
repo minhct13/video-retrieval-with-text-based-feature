@@ -1,4 +1,5 @@
 import os
+import json
 import argparse
 from app import EncoderService
 from app.models import Video
@@ -47,31 +48,7 @@ def save_video_embedding(session, video_name, video_path, video_vector, text_vec
             text_prob_5=text_probs[4]
         )
         session.add(video)
-
-def parse_text_file(text_file_path):
-    with open(text_file_path, "r") as f:
-        content = f.read()
-    
-    lines = content.strip().split('\n')
-    texts = []
-    probs = []
-
-    buffer = []
-    for line in lines:
-        if '|' in line:
-            if buffer:
-                texts.append(' '.join(buffer))
-                buffer = []
-            text, prob = line.rsplit('|', 1)
-            texts.append(text.strip())
-            probs.append(float(prob.strip()))
-        else:
-            buffer.append(line.strip())
-
-    if buffer:
-        texts.append(' '.join(buffer))
-    
-    return texts, probs
+        
 
 def process_video(es, session, video_path, text_vectors, text_probs):
     video_vector = es.encode_video(video_path)
@@ -86,29 +63,42 @@ def process_video(es, session, video_path, text_vectors, text_probs):
     )
     print(f"SAVED {video_name}")
 
+
+def load_json_files(json_dir):
+    data = {}
+    for json_file in os.listdir(json_dir):
+        if json_file.endswith(".json"):
+            with open(os.path.join(json_dir, json_file), "r") as f:
+                data.update(json.load(f))
+    return data
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process MP4 files to obtain embeddings and compute cosine similarity with text.")
     parser.add_argument("--video_dir", type=str, required=True, help="Directory containing MP4 video files.")
     parser.add_argument("--checkpoint", type=str, required=True, help="Path to the model checkpoint.")
-    parser.add_argument("--text_dir", type=str, required=True, help="Directory containing text files.")
+    parser.add_argument("--json_dir", type=str, required=True, help="Directory containing JSON files with video-text data.")
 
     args = parser.parse_args()
 
     es = EncoderService()
     es.init_app(args.checkpoint)
 
+    # Load the video-text data from the JSON directory
+    video_text_data = load_json_files(args.json_dir)
+
     video_files = [os.path.join(args.video_dir, f) for f in os.listdir(args.video_dir) if f.endswith(".mp4")]
+
 
     with ThreadPoolExecutor() as executor:
         futures = []
         for video_path in video_files:
-            text_path = os.path.join(args.text_dir, os.path.basename(video_path).replace(".mp4", ".txt"))
-            if not os.path.exists(text_path):
+            video_name = os.path.basename(video_path)
+            if video_name not in video_text_data:
                 continue
 
-            texts, probs = parse_text_file(text_path)
+            texts = video_text_data[video_name]
             text_vectors = [es.encode_text(text) for text in texts]
-            text_probs = probs
+            text_probs = [1.0 for _ in texts]  # Assuming a uniform probability for each text
 
             futures.append(
                 executor.submit(
@@ -121,14 +111,11 @@ if __name__ == "__main__":
                 )
             )
 
-
     # Ensure all futures are completed
     for future in futures:
         future.result()
 
-    
     session.commit()
     session.close()
-
-# python scripts/encode_embedding.py  --video_dir ../data/archive/TrainValVideo/ --checkpoint ../pretrain_clipvip_base_16.pt --text_dir "../data/kaggle
+# python scripts/encode_embedding.py  --video_dir ../data/archive/TrainValVideo/ --checkpoint ../pretrain_clipvip_base_16.pt --json_dir ../data/output
 # /working/output"
