@@ -1,0 +1,38 @@
+.searchBar{
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5rem;
+}
+.container{
+    display: flex;
+    width: 100%;
+    background-color: #2f2f2f;
+    padding: 0.5rem 1rem;
+    border-radius: 26px;
+    justify-content: space-between;
+}
+.inputQuerry{
+    background-color: transparent;
+    border: none;
+    width: 95%;
+}
+.inputQuerry:focus{
+    outline: none;
+    color: rgba(155, 155, 155, 1);
+    font-size: 14px;
+}
+.queryBtn{
+    background-color: rgba(155, 155, 155, 1);
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.iconQuery{
+    width: 2rem;
+    height: 2rem;
+}

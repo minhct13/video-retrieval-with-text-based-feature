@@ -1,5 +1,7 @@
+import Filter from '../components/Filter/Filter'
 import Introduction from '../components/Introduction/Introduction'
 import ListVideo from '../components/ListVideo/ListVideo'
+import SearchBar from '../components/SearchBar/SearchBar'
 import ListSuggestion from '../components/Suggestion/ListSuggestion'
 import styles from './Home.module.css'
 
@@ -26,7 +28,7 @@ function Home() {
             title: "video 4"
         },
         {
-            id:5,
+            id: 5,
             link: "https://www.youtube.com/watch?v=oUFJJNQGwhk'",
             title: "video 5"
         },
@@ -44,10 +46,12 @@ function Home() {
     return (
         <div className={styles.home}>
             <Introduction />
+            <Filter />
             <ListVideo
                 videos={fakeData}
             />
             <ListSuggestion />
+            <SearchBar />
         </div>
     )
 }

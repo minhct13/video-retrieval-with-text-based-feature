@@ -1,0 +1,17 @@
+.filter{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+.container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 1%;
+    cursor: pointer;
+    color: #e37979;
+    font-size: 14px;
+}
+.container >p{
+    margin-right: 5px;
+}
