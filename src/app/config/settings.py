@@ -17,11 +17,6 @@ class Config():
 
     SERVICE_NAME = environ["SERVICE_NAME"]
 
-    MAIL_DEFAULT_SENDER = "noreply@flask.com"
-
-    ADMIN_MINIO_URL = environ["ADMIN_MINIO_URL"]
-    MINIO_ROOT_USER = environ["MINIO_ROOT_USER"]
-    MINIO_ROOT_PASSWORD = environ["MINIO_ROOT_PASSWORD"]
 
 
     # DB centrialization
@@ -42,17 +37,6 @@ class Config():
         "pool_recycle": SQLALCHEMY_POOL_RECYCLE
     }
 
-    # service URLs
-    FRONTEND_URL = environ["FRONTEND_URL"]
-    IMAGE_STORAGE = environ["IMAGE_STORAGE"]
-
-    GOOGLE_CLIENT_ID = environ["GOOGLE_CLIENT_ID"]
-    GOOGLE_CLIENT_SECRET = environ["GOOGLE_CLIENT_SECRET"]
-    GOOGLE_DISCOVERY_URL = (
-        "https://accounts.google.com/.well-known/openid-configuration"
-    )
-
-    BING_API_KEY = environ["BING_API_KEY"]
 
 class DevelopmentConfig(Config):
     MINIO_SECURE = False

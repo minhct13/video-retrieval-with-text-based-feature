@@ -3,14 +3,10 @@ import os
 import json
 import argparse
 from sklearn.metrics.pairwise import cosine_similarity
-from src.scripts import process_video
-from concurrent.futures import ThreadPoolExecutor
 from app import EncoderService
 from app.models import Video
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
-import torch
-from torch.utils.data import DataLoader, Dataset
 
 
 def aggregate_vectors(video_vector, text_vectors, text_probs, video_weight=60, text_weight=40):
@@ -47,17 +43,19 @@ engine = sqlalchemy.create_engine(DATABASE_URI)
 Session = sessionmaker(bind=engine)
 session = Session()
 
+# Function to load ground truth from JSON file
 def load_ground_truth(file_path):
     with open(file_path, 'r') as f:
         data = json.load(f)
-    video_ids = list(data.keys())
-    return video_ids
+    return data
 
 def compute_metrics(similarity_matrix, ground_truth_indices):
     # Get sorted indices based on similarity scores (highest scores first)
     sorted_indices = np.argsort(-similarity_matrix, axis=1)
+    print(sorted_indices)
     # Find the rank of the correct match for each query
-    matches = np.array([np.where(sorted_indices[i] == ground_truth_indices[i])[0][0] for i in range(len(ground_truth_indices))])
+    matches = np.array([np.where(sorted_indices[i] == ground_truth_indices[i])[0][0] for i in range(len(sorted_indices))])
+    
     # Calculate recall metrics
     r1 = float(np.sum(matches == 0)) / len(matches)
     r5 = float(np.sum(matches < 5)) / len(matches)
@@ -72,6 +70,8 @@ def fetch_video_data(session):
     video_vectors = []
     text_vectors = []
     text_probs = []
+    video_names = []
+
     for video in videos:
         video_vectors.append(video.video_vector)
         text_vectors.append([
@@ -88,7 +88,9 @@ def fetch_video_data(session):
             video.text_prob_4,
             video.text_prob_5,
         ])
-    return np.array(video_vectors), np.array(text_vectors), np.array(text_probs)
+        video_names.append(video.name)
+    
+    return np.array(video_vectors), np.array(text_vectors), np.array(text_probs), video_names
 
 
 if __name__ == "__main__":
@@ -98,13 +100,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    es = EncoderService(args.checkpoint)
-
-    # Initialize the database connection
-    DATABASE_URI = 'postgresql://user:user@localhost:5432/postgres'
-    engine = sqlalchemy.create_engine(DATABASE_URI)
-    Session = sessionmaker(bind=engine)
-    session = Session()
+    es = EncoderService()
+    es.init_app(args.checkpoint)
 
     # Fetch video and text vectors from the database
     video_vectors, text_vectors, text_probs, video_names = fetch_video_data(session)
@@ -112,7 +109,7 @@ if __name__ == "__main__":
     # Load ground truth and filter by existing records in the database
     ground_truth = load_ground_truth(args.ground_truth_file)
     filtered_ground_truth = {k: v for k, v in ground_truth.items() if k in video_names}
-    
+
     if not filtered_ground_truth:
         print("No matching records found between ground truth and database.")
         exit()
@@ -120,24 +117,33 @@ if __name__ == "__main__":
     # Compute aggregated vectors
     aggregated_vectors = [aggregate_vectors(v, t, p) for v, t, p in zip(video_vectors, text_vectors, text_probs)]
 
-    # Convert lists to numpy arrays
+    # Convert aggregated vectors to numpy array
     video_embeddings = np.array(aggregated_vectors)
-    text_embeddings = np.array([item for sublist in text_vectors for item in sublist])
 
-    # Create ground truth pairs
-    ground_truth_pairs = [(video_names.index(k), i) for k, v in filtered_ground_truth.items() for i in range(len(v))]
+    # Encode ground truth text descriptions using EncoderService
+    text_embeddings = []
+    ground_truth_pairs = []
 
-    # Compute similarity matrix
-    sim_matrix = cosine_similarity(text_embeddings, video_embeddings)
+    for video_name, descriptions in filtered_ground_truth.items():
+        for description in descriptions:
+            encoded_text = es.encode_text(description)
+            text_embeddings.append(encoded_text)
+            ground_truth_pairs.append((video_names.index(video_name), len(text_embeddings) - 1))
+
+    text_embeddings = np.array(text_embeddings)
 
     # Extract indices for ground truth pairs
-    ground_truth_indices = np.array([pair[0] for pair in ground_truth_pairs])
+    ground_truth_video_indices = np.array([pair[0] for pair in ground_truth_pairs])
+    ground_truth_text_indices = np.array([pair[1] for pair in ground_truth_pairs])
+
+    # Compute similarity matrix between video embeddings and text embeddings
+    sim_matrix = cosine_similarity(text_embeddings, video_embeddings)
 
     # Compute metrics
-    v2tr1, v2tr5, v2tr10, v2tmedr, v2tmeanr = compute_metrics(sim_matrix.T, ground_truth_indices)
-    t2vr1, t2vr5, t2vr10, t2vmedr, t2vmeanr = compute_metrics(sim_matrix, ground_truth_indices)
+    v2tr1, v2tr5, v2tr10, v2tmedr, v2tmeanr = compute_metrics(sim_matrix.T, ground_truth_video_indices)
+    t2vr1, t2vr5, t2vr10, t2vmedr, t2vmeanr = compute_metrics(sim_matrix, ground_truth_text_indices)
 
     print(f"Video-to-Text R@1: {v2tr1}, R@5: {v2tr5}, R@10: {v2tr10}, MedR: {v2tmedr}, MeanR: {v2tmeanr}")
     print(f"Text-to-Video R@1: {t2vr1}, R@5: {t2vr5}, R@10: {t2vr10}, MedR: {t2vmedr}, MeanR: {t2vmeanr}")
 
-# python scripts/compute_metrics.py --ground_truth_file data/video_retrieval/msrvtt\/est_JSFUSION.json --checkpoint ../pretrain_clipvip_base_16.pt
+# python scripts/compute_metrics.py --ground_truth_file ../data/video_retrieval/msrvtt/train_7k.json --checkpoint ../pretrain_clipvip_base_16.pt
