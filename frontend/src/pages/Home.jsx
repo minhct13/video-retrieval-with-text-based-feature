@@ -9,7 +9,7 @@ function Home() {
     const fakeData = [
         {
             id: 1,
-            link: "https://www.youtube.com/watch?v=oUFJJNQGwhk'",
+            link: "https://res.cloudinary.com/dvvi0pivw/video/upload/v1722612622/20230910_170501_llm8bh.mp4",
             title: "video 1"
         },
         {
