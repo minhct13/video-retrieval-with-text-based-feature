@@ -12,6 +12,22 @@
 
 .item {
     width: 18%;
-   margin-left: 1%;
-   margin-right: 1%;
+    margin-left: 1%;
+    margin-right: 1%;
+}
+
+@media only screen and (max-width: 1024px) {
+    .item {
+        width: 23%;
+    }
+}
+@media only screen and (max-width: 768px) {
+    .item {
+        width: 31%;
+    }
+}
+@media only screen and (max-width: 575px) {
+    .item {
+        width: 48%;
+    }
 }

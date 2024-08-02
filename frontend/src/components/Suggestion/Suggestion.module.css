@@ -5,11 +5,13 @@
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
+    margin-bottom: 2rem;
 }
 
 .sugestItem {
     width: 25%;
     height: auto;
+    margin-bottom: 2rem;
 }
 
 .item {
@@ -31,10 +33,62 @@
     text-align: left;
     margin: 0;
     font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* number of lines to show */
+    -webkit-box-orient: vertical;
 
 }
 
 .item:hover {
     background-color: #2f2f2f;
     transition: 0.4s;
+}
+
+@media only screen and (max-width: 1600px) {
+    .listSugest {
+        width: 70%
+    }
+}
+
+@media only screen and (max-width: 1157px) {
+    .listSugest {
+        width: 90%
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .listSugest {
+        width: 90%
+    }
+
+    .item {
+        padding: .45rem;
+    }
+
+}
+
+@media only screen and (max-width: 600px) {
+    .listSugest {
+        justify-content: flex-start;
+    }
+
+    .sugestItem {
+        width: 50%;
+        height: 4rem;
+    }
+
+    .item {
+        padding: .45rem;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+
+
+    .itemContainer>p {
+        font-size: 12px;
+    }
+
 }
