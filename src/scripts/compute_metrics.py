@@ -77,80 +77,93 @@ def fetch_video_data(session):
     
     return np.array(video_vectors), np.array(text_vectors), np.array(text_probs), video_names
 
+def get_top_k_retrieved(text_embedding, video_embeddings, k=10):
+    similarities = cosine_similarity([text_embedding], video_embeddings)[0]
+    top_k_indices = np.argsort(-similarities)[:k]
+    return top_k_indices
+
+def compute_recall_metrics(text_embeddings, video_embeddings, ground_truth, k_values=[1, 5, 10]):
+    num_queries = len(text_embeddings)
+    recall_metrics = {k: 0 for k in k_values}
+
+    for i, text_embedding in enumerate(text_embeddings):
+        top_k_retrieved = get_top_k_retrieved(text_embedding, video_embeddings, max(k_values))
+        correct_video = ground_truth[i]
+
+        for k in k_values:
+            if correct_video in top_k_retrieved[:k]:
+                recall_metrics[k] += 1
+
+    for k in k_values:
+        recall_metrics[k] /= num_queries
+
+    return recall_metrics
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process MP4 files to obtain embeddings and compute cosine similarity with text.")
     parser.add_argument("--checkpoint", type=str, required=True, help="Path to the model checkpoint.")
     parser.add_argument("--ground_truth_file", type=str, required=True, help="Path to the ground truth JSON file.")
-
+    parser.add_argument("--cache_file", type=str, required=True, help="Path to the cache file.")
     args = parser.parse_args()
 
     es = EncoderService()
     es.init_app(args.checkpoint)
 
-    # Fetch video and text vectors from the database
-    video_vectors, text_vectors, text_probs, video_names = fetch_video_data(session)
+    # Check if cache exists
+    if os.path.exists(args.cache_file):
+        print("Loading embeddings from cache...")
+        with np.load(args.cache_file, allow_pickle=True) as data:
+            video_vectors = data['video_vectors']
+            text_vectors = data['text_vectors']
+            text_probs = data['text_probs']
+            video_names = data['video_names'].tolist()
+            text_embeddings = data['text_embeddings']
+            ground_truth_video_indices = data['ground_truth_video_indices']
+            ground_truth_text_indices = data['ground_truth_text_indices']
+    else:
+        # Fetch video and text vectors from the database
+        video_vectors, text_vectors, text_probs, video_names = fetch_video_data(session)
 
-    # Load ground truth and filter by existing records in the database
-    ground_truth = load_ground_truth(args.ground_truth_file)
-    filtered_ground_truth = {k: v for k, v in ground_truth.items() if k in video_names}
+        # Load ground truth and filter by existing records in the database
+        ground_truth = load_ground_truth(args.ground_truth_file)
+        filtered_ground_truth = {k: v for k, v in ground_truth.items() if k in video_names}
 
-    if not filtered_ground_truth:
-        print("No matching records found between ground truth and database.")
-        exit()
+        if not filtered_ground_truth:
+            print("No matching records found between ground truth and database.")
+            exit()
+
+        # video_embeddings = np.array(video_vectors)
+
+        # Encode ground truth text descriptions using EncoderService
+        text_embeddings = []
+        ground_truth_pairs = []
+
+        for video_name, descriptions in filtered_ground_truth.items():
+            for description in descriptions:
+                encoded_text = es.encode_text(description)
+                text_embeddings.append(encoded_text)
+                ground_truth_pairs.append((video_names.index(video_name), len(text_embeddings) - 1))
+
+        text_embeddings = np.array(text_embeddings)
+
+        # Extract indices for ground truth pairs
+        ground_truth_video_indices = np.array([pair[0] for pair in ground_truth_pairs])
+        ground_truth_text_indices = np.array([pair[1] for pair in ground_truth_pairs])
+
+        # Save embeddings and ground truth indices to cache
+        print("Saving embeddings to cache...")
+        np.savez(args.cache_file, video_vectors=video_vectors, text_vectors=text_vectors,
+                 text_probs=text_probs, video_names=video_names, text_embeddings=text_embeddings,
+                 ground_truth_video_indices=ground_truth_video_indices, ground_truth_text_indices=ground_truth_text_indices)
 
     # Compute aggregated vectors
     aggregated_vectors = [aggregate_vectors(v, t, p) for v, t, p in zip(video_vectors, text_vectors, text_probs)]
-
     # Convert aggregated vectors to numpy array
-    video_embeddings = np.array(aggregated_vectors)
+    # video_embeddings = np.array(aggregated_vectors)
+    video_embeddings = np.array(video_vectors)
 
-    # Encode ground truth text descriptions using EncoderService
-    text_embeddings = []
-    ground_truth_pairs = []
-
-    for video_name, descriptions in filtered_ground_truth.items():
-        for description in descriptions:
-            encoded_text = es.encode_text(description)
-            text_embeddings.append(encoded_text)
-            ground_truth_pairs.append((video_names.index(video_name), len(text_embeddings) - 1))
-
-    text_embeddings = np.array(text_embeddings)
-
-    # Extract indices for ground truth pairs
-    ground_truth_video_indices = np.array([pair[0] for pair in ground_truth_pairs])
-    ground_truth_text_indices = np.array([pair[1] for pair in ground_truth_pairs])
-
-   # Compute similarity matrix between video embeddings and text embeddings
-    sim_matrix = cosine_similarity(text_embeddings, video_embeddings)
-
-    # Ensure all indices are within bounds
-    max_index = sim_matrix.shape[1] - 1
-    out_of_bounds_indices = [idx for idx in ground_truth_video_indices if idx > max_index]
-    if out_of_bounds_indices:
-        print(f"Out of bounds indices found: {out_of_bounds_indices}")
-        exit()
-
-    def compute_metrics(similarity_matrix, ground_truth_indices):
-        # Get sorted indices based on similarity scores (highest scores first)
-        sorted_indices = np.argsort(-similarity_matrix, axis=1)
-        # Find the rank of the correct match for each query
-        print(sorted_indices.shape, ground_truth_indices.shape)
-        matches = np.array([np.where(sorted_indices[i] == ground_truth_indices[i])[0][0] for i in range(len(sorted_indices))])
-        
-        # Calculate recall metrics
-        r1 = float(np.sum(matches == 0)) / len(matches)
-        r5 = float(np.sum(matches < 5)) / len(matches)
-        r10 = float(np.sum(matches < 10)) / len(matches)
-        medr = np.median(matches) + 1
-        meanr = np.mean(matches) + 1
-        
-        return r1, r5, r10, medr, meanr
-
-    # Compute metrics
-    v2tr1, v2tr5, v2tr10, v2tmedr, v2tmeanr = compute_metrics(sim_matrix.T, ground_truth_video_indices)
-    t2vr1, t2vr5, t2vr10, t2vmedr, t2vmeanr = compute_metrics(sim_matrix, ground_truth_text_indices)
-
-    print(f"Video-to-Text R@1: {v2tr1}, R@5: {v2tr5}, R@10: {v2tr10}, MedR: {v2tmedr}, MeanR: {v2tmeanr}")
-    print(f"Text-to-Video R@1: {t2vr1}, R@5: {t2vr5}, R@10: {t2vr10}, MedR: {t2vmedr}, MeanR: {t2vmeanr}")
+    # Compute recall metrics
+    recall_metrics = compute_recall_metrics(text_embeddings, video_embeddings, ground_truth_video_indices)
+    print(f"Recall Metrics: {recall_metrics}")
+    
 # python scripts/compute_metrics.py --ground_truth_file ../data/video_retrieval/msrvtt/train_7k.json --checkpoint ../pretrain_clipvip_base_16.pt
