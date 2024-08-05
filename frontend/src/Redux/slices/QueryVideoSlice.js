@@ -17,14 +17,17 @@ const queryVideoSlice = createSlice({
         },
         setListVideo: (state, action) => {
             let newState = { ...state }
+            newState.videos = action.payload
             return newState
         },
         setSuggesstion: (state, action) => {
             let newState = { ...state }
+            newState.suggesstions = action.payload
             return newState
         },
         setLoading: (state, action) => {
             let newState = { ...state }
+            newState.isLoading = action.payload
             return newState
         },
     },

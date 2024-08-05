@@ -1,1 +1,1 @@
-export const VITE_API_URL = ""
+export const VITE_API_URL ='http://103.1.184.243:8002/backend/v1/'

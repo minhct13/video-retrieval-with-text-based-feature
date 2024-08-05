@@ -19,6 +19,7 @@
     border: none;
     width: 95%;
     font-size: 14px;
+    color: rgba(155, 155, 155, 1);
 }
 
 .inputQuerry:focus {
