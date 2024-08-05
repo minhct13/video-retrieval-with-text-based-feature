@@ -13,25 +13,24 @@ function Home() {
             id: 1,
             video_name: "video1.mp4",
             video_path: "https://res.cloudinary.com/dvvi0pivw/video/upload/v1722612622/20230910_170501_llm8bh.mp4",
-            prob: "80%"
+            similarity: 0.8
         },
         {
             id: 2,
             video_name: "video1.mp4",
             video_path: "https://res.cloudinary.com/dvvi0pivw/video/upload/v1722612622/20230910_170501_llm8bh.mp4",
-            prob: "80%"
+            similarity: 0.8
         },
         {
             id: 3,
             video_name: "video1.mp4",
             video_path: "https://res.cloudinary.com/dvvi0pivw/video/upload/v1722612622/20230910_170501_llm8bh.mp4",
-            prob: "80%"
+            similarity: 0.8
         },
     ]
     return (
         <div className={styles.home}>
             <Introduction />
-            <Filter />
             <ListVideo
                 videos={fakeData}
             />

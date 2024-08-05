@@ -13,6 +13,7 @@ function ListVideo(props) {
                             <VideoItem
                                 link={el.video_name}
                                 title = {el.video_name}
+                                similarity = {el.similarity}
                             />
                         </div>
                     ))

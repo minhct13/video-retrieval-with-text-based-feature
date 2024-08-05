@@ -7,6 +7,7 @@
     margin-top: 0;
     color: rgba(155, 155, 155, 1);
     font-size: 14px;
+    margin-bottom: 2px;
 }
 
 .videoPlayer {
@@ -56,7 +57,12 @@
 .reactPlayer>video {
     /* height: 100% !important; */
 }
-
+.similarity{
+    text-align: left;
+    margin-top: 0;
+    color: rgba(155, 155, 155, 1);
+    font-size: 14px;
+}
 @media only screen and (max-width: 400px) {
     .title {
         font-size: 12px;

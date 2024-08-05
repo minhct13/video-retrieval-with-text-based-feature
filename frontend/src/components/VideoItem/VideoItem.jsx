@@ -5,7 +5,7 @@ import styles from './VideoItem.module.css'
 import PopupVideo from './PopupVideo'
 
 function VideoItem(props) {
-    const { link, title } = props
+    const { link, title, similarity } = props
     const [isOpenPopup, setIsOpenPopup] = useState(false)
     const onSetOpenPopup = (value) => {
         setIsOpenPopup(value)
@@ -28,6 +28,7 @@ function VideoItem(props) {
             </div>
             <div>
                 <p className={styles.title}>{title}</p>
+                <p className={styles.similarity}>Similarity: {similarity}</p>
             </div>
             <PopupVideo
                 isOpen={isOpenPopup}
