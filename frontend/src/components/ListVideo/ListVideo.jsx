@@ -11,8 +11,8 @@ function ListVideo(props) {
                     videos.map((el, index) => (
                         <div className={styles.item} key={index}>
                             <VideoItem
-                                link={el.link}
-                                title = {el.title}
+                                link={el.video_name}
+                                title = {el.video_name}
                             />
                         </div>
                     ))
