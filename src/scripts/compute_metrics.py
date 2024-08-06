@@ -167,3 +167,4 @@ if __name__ == "__main__":
     print(f"Recall Metrics: {recall_metrics}")
     
 # python scripts/compute_metrics.py --ground_truth_file ../data/video_retrieval/msrvtt/train_7k.json --checkpoint ../pretrain_clipvip_base_16.pt
+  

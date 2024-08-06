@@ -2,7 +2,7 @@ from os import environ
 from multiprocessing import cpu_count
 
 def max_workers():
-    return min(5, cpu_count() * 2 + 1)
+    return min(1, cpu_count() * 2 + 1)
 
 ENVIRONMENT_DEBUG = environ.get("APP_DEBUG")
 ENVIRONMENT_PORT = environ.get("APP_PORT")

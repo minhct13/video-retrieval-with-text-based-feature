@@ -52,40 +52,6 @@ class EncoderService:
         indices = np.clip(indices, start_idx, end_idx - 1).astype(np.int64)
         return indices
         
-
-    def encode(self, video_path=None, text=None):
-        """ Extract vector of video/ text """
-
-        # Tokenize the text input
-        tokens = self.tokenizer([text], padding=True, return_tensors="pt")
-        textOutput = self.model.get_text_features(**tokens)
-        print("Text Embedding Shape:", textOutput.shape)
-
-        # Process video file from the video_path
-        processor = AutoProcessor.from_pretrained("microsoft/xclip-base-patch16")
-        if video_path.endswith(".mp4"):
-            print(f"Processing {video_path}")
-            container = av.open(video_path)
-            clip_len = 12
-            fcount = container.streams.video[0].frames
-            indices = self.sample_frame_indices(clip_len=clip_len, frame_sample_rate=fcount//clip_len, seg_len=fcount)
-            video = self.read_video_pyav(container, indices)
-            pixel_values = processor(videos=list(video), return_tensors="pt").pixel_values
-
-            inputs = {
-                "if_norm": True,
-                "pixel_values": pixel_values
-            }
-
-            with torch.no_grad():
-                frame_features = self.model.get_image_features(**inputs)
-            video_embedding = frame_features.mean(dim=0, keepdim=True)
-            print("Video Embedding Shape:", video_embedding.shape)
-
-            with torch.no_grad():
-                sim = F.cosine_similarity(textOutput, video_embedding, dim=1)
-                print(f"Cosine Similarity for: {sim.item()}")
-    
     def encode_text(self, text):
         # Tokenize the text input
         tokens = self.tokenizer([text], padding=True, return_tensors="pt").to(self.device)

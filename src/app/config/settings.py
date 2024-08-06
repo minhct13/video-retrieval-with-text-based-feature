@@ -23,20 +23,20 @@ class Config():
     SQLALCHEMY_DATABASE_URI = \
         f"postgresql://{DEFAULT_USER}:{DEFAULT_PASSWORD}@{DEFAULT_HOST}/{DEFAULT_DB}"
     SQLALCHEMY_BINDS = {}
-
+    VIDEO_DIR = environ["VIDEO_DIR"]
     # Set below value less than HAproxy client timeout
     # to avoid connection being killed while using
     SQLALCHEMY_POOL_RECYCLE = 300 # 5 mins
     SQLALCHEMY_ECHO = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
+    CHECKPOINT_PATH = "pretrain_clipvip_base_16.pt"
     SQLALCHEMY_ENGINE_OPTIONS  = {
         "pool_pre_ping": True,
         "pool_size": 10,
         "max_overflow": 10,
         "pool_recycle": SQLALCHEMY_POOL_RECYCLE
     }
-
+    VIDEO_URL="https://7ba4-2405-4802-80ec-2fa0-48db-e50b-255-4e6f.ngrok-free.app"
 
 class DevelopmentConfig(Config):
     MINIO_SECURE = False
