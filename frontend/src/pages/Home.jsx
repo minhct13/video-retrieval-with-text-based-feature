@@ -7,15 +7,11 @@ import ListVideo from '../components/ListVideo/ListVideo'
 import SearchBar from '../components/SearchBar/SearchBar'
 import ListSuggestion from '../components/Suggestion/ListSuggestion'
 import styles from './Home.module.css'
-import { getVideoAction, getSuggestion } from '../Redux/Actions/QueryVideoActions'
+import { getSuggestion } from '../Redux/Actions/QueryVideoActions'
 
 function Home() {
     const dispatch = useDispatch()
     useEffect(() => {
-        // dispatch(getVideoAction({
-        //     query:'',
-        //     top_n:"16"
-        // }))
         dispatch(getSuggestion())
     }, [])
     const { videos } = useSelector((state) => state.queryVideoSlice)

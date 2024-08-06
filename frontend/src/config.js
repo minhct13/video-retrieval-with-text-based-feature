@@ -1,1 +1,1 @@
-export const VITE_API_URL ='https://b64f-2405-4802-80ec-2fa0-48db-e50b-255-4e6f.ngrok-free.app/backend/v1'
+export const VITE_API_URL ='https://9b69-2405-4802-80ec-2fa0-d1af-9ff2-f42-955f.ngrok-free.app/backend/v1'

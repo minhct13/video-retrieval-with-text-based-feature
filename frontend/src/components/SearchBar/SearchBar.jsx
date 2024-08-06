@@ -27,7 +27,7 @@ function SearchBar() {
       <div className={styles.container}>
         <input
           className={styles.inputQuerry}
-          placeholder='Chat'
+          placeholder='Search'
           value={keySearch}
           onChange={onChangeKeySearch}
           onKeyDown={handleKeyDown}

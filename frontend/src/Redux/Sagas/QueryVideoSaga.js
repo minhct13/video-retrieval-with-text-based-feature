@@ -9,7 +9,7 @@ function* handleGetVideosApi(action) {
     yield put(setLoading(true))
     try {
         const res = yield call(Service.getVideosApi, action.payload)
-        if(res.data && res.data.data){
+        if (res.data && res.data.data) {
             res.data.data.forEach(el => {
                 el.id = uuidv4()
             })
@@ -18,13 +18,13 @@ function* handleGetVideosApi(action) {
         yield put(setLoading(false))
     } catch (error) {
         yield put(setLoading(false))
-        toast('Lỗi hệ thống:', error)
+        toast('System error:', error)
     }
 }
 function* handleGetSuggestionApi() {
     try {
         const res = yield call(Service.getSuggestionsApi)
-        if(res.data && res.data.data){
+        if (res.data && res.data.data) {
             const convertData = []
             res.data.data.forEach(el => {
                 convertData.push({
@@ -35,7 +35,7 @@ function* handleGetSuggestionApi() {
             yield put(setSuggesstion(convertData))
         }
     } catch (error) {
-        toast('Lỗi hệ thống:', error)
+        toast('System error:', error)
     }
 }
 function* getVideosSaga() {
