@@ -152,12 +152,12 @@ def run(video_dir, instruction, model, vis_processor, gen_subtitles=False, index
         video_names_to_process = set(os.listdir(video_dir))
     
     for i, video_name in enumerate(os.listdir(video_dir)[index:], start=index):
-        if video_name not in video_names_to_process:
+        pre, ext = os.path.splitext(video_name)
+        if pre not in video_names_to_process:
             continue
         
         s = time()
         video_path = os.path.join(video_dir, video_name)
-        pre, ext = os.path.splitext(video_name)
         save_path = pre + ".json"
         
         if os.path.exists(os.path.join(args.save_dir, save_path)):
