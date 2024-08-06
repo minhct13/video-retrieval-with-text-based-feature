@@ -3,7 +3,7 @@ import { useState } from 'react';
 import ReactPlayer from 'react-player'
 import styles from './VideoItem.module.css'
 import PopupVideo from './PopupVideo'
-import { VITE_API_URL } from '../../config'
+// import { VITE_API_URL } from '../../config'
 
 function VideoItem(props) {
     const { link, title, similarity } = props
@@ -16,7 +16,7 @@ function VideoItem(props) {
             <div className={styles.videoPlayer}>
                 <div className={styles.videoMedia}>
                     <ReactPlayer
-                        url={`${VITE_API_URL}${link}`}
+                        url={link}
                         width="100%"
                         height="100%"
                         playing={false}
