@@ -17,7 +17,7 @@ function ListVideo(props) {
                     ) :
                         <>
                             {
-                                videos.length > 0 ? (
+                                videos.length > 0 && (
                                     <>
                                         {
                                             videos.map((el, index) => (
@@ -31,7 +31,7 @@ function ListVideo(props) {
                                             ))
                                         }
                                     </>
-                                ) : <p className={styles.emptyData}>Không có dữ liệu</p>
+                                )
                             }
                         </>
                 }

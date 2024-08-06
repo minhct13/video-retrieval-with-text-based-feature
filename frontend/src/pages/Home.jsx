@@ -12,9 +12,10 @@ import { getVideoAction, getSuggestion } from '../Redux/Actions/QueryVideoAction
 function Home() {
     const dispatch = useDispatch()
     useEffect(() => {
-        dispatch(getVideoAction({
-            query:''
-        }))
+        // dispatch(getVideoAction({
+        //     query:'',
+        //     top_n:"16"
+        // }))
         dispatch(getSuggestion())
     }, [])
     const { videos } = useSelector((state) => state.queryVideoSlice)
