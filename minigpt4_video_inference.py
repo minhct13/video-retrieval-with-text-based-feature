@@ -151,7 +151,6 @@ def run(video_dir, instruction, model, vis_processor, gen_subtitles=False, index
     else:
         video_names_to_process = set(os.listdir(video_dir))
     
-    answers = []
     for i, video_name in enumerate(os.listdir(video_dir)[index:], start=index):
         if pre not in video_names_to_process:
             continue
@@ -164,6 +163,7 @@ def run(video_dir, instruction, model, vis_processor, gen_subtitles=False, index
         if os.path.exists(os.path.join(args.save_dir, save_path)):
             continue
         
+        answers = []
         for question in QUESTIONS:
             if gen_subtitles:
                 subtitle_path = generate_subtitles(video_path)
@@ -188,7 +188,7 @@ def run(video_dir, instruction, model, vis_processor, gen_subtitles=False, index
         save_to_json(args, save_path, video_name, answers)
         print(i, video_name, time() - s, "s")
 
-    return answers
+    return 
 
 
   
