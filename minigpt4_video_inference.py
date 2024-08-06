@@ -152,7 +152,7 @@ def run(video_dir, instruction, model, vis_processor, gen_subtitles=False, index
         video_names_to_process = set(os.listdir(video_dir))
     
     for i, video_name in enumerate(os.listdir(video_dir)[index:], start=index):
-        if pre not in video_names_to_process:
+        if video_name not in video_names_to_process:
             continue
         
         pre, ext = os.path.splitext(video_name)
