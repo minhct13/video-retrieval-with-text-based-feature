@@ -1,17 +1,16 @@
 import os
 import json
 import argparse
-from app import EncoderService
-from app.models import Video
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 from concurrent.futures import ThreadPoolExecutor
-
+from video import EncoderService, Video
 # Initialize the database connection
 DATABASE_URI = 'postgresql://user:user@localhost:5432/postgres'
 engine = sqlalchemy.create_engine(DATABASE_URI)
 Session = sessionmaker(bind=engine)
 session = Session()
+
 
 def save_video_embedding(session, video_name, video_path, video_vector, text_vectors, text_probs):
     # Check if the video already exists
@@ -48,6 +47,9 @@ def save_video_embedding(session, video_name, video_path, video_vector, text_vec
             text_prob_5=text_probs[4]
         )
         session.add(video)
+    session.commit()
+    session.close()
+
         
 
 def process_video(es, session, video_path, text_vectors, text_probs):
@@ -85,37 +87,30 @@ if __name__ == "__main__":
 
     # Load the video-text data from the JSON directory
     video_text_data = load_json_files(args.json_dir)
-
+    
     video_files = [os.path.join(args.video_dir, f) for f in os.listdir(args.video_dir) if f.endswith(".mp4")]
 
 
-    with ThreadPoolExecutor() as executor:
-        futures = []
-        for video_path in video_files:
-            video_name = os.path.basename(video_path)
-            if video_name not in video_text_data:
-                continue
+    # with ThreadPoolExecutor() as executor:
+        # futures = []
+for video_path in video_files:
+    video_name = os.path.basename(video_path).replace(".mp4", "")
+    if video_name not in video_text_data:
+        continue
 
-            texts = video_text_data[video_name]
-            text_vectors = [es.encode_text(text) for text in texts]
-            text_probs = [1.0 for _ in texts]  # Assuming a uniform probability for each text
+    texts = video_text_data[video_name]
+    text_vectors = [es.encode_text(text["answer"]) for text in texts]
+    text_probs = [text["prob"] for text in texts]
 
-            futures.append(
-                executor.submit(
-                    process_video,
-                    es,
-                    session,
-                    video_path,
-                    text_vectors,
-                    text_probs
-                )
-            )
+    process_video(
+        es=es,
+        session=session,
+        video_path=video_path,
+        text_vectors=text_vectors,
+        text_probs=text_probs
+    )
 
-    # Ensure all futures are completed
-    for future in futures:
-        future.result()
 
-    session.commit()
-    session.close()
-# python scripts/encode_embedding.py  --video_dir ../data/archive/TrainValVideo/ --checkpoint ../pretrain_clipvip_base_16.pt --json_dir ../data/output
-# /working/output"
+
+
+# python scripts/encode_embedding.py  --video_dir ../data/ --checkpoint ./pretrain_clipvip_base_16.pt --json_dir ../data/kaggle/working/output

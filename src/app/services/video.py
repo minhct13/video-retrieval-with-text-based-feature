@@ -86,8 +86,8 @@ class VideoService:
         """
         return {
             "data" : [
-                "What are the main actions or activities happening in the video?",
-                "Who are the main characters or subjects appearing in the video?",
+                "Playing tennis",
+                "",
                 "What is the setting or location where the video takes place?",
                 "What objects or items are prominently featured in the video?",
                 "What is the overall mood or atmosphere of the video?",
