@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  http-server:
+    image: node:latest
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/usr/src/app
+    working_dir: /usr/src/app
+    command: >
+      sh -c "npm install -g http-server && http-server --port 3001"
