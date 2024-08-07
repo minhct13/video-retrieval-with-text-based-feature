@@ -25,6 +25,7 @@ const ModelSelect = (props) => {
       <Popover
         isOpen={isOpen}
         positions={["top", "bottom", "left", "right"]}
+        containerStyle = {{zIndex:50}}
         content={
           <div className={styles["listModel"]}>
             <div className={styles.listModelContainer}>
