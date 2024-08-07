@@ -4,6 +4,7 @@ const initialState = {
     videos: [],
     suggesstions: [],
     isLoading: false,
+    countQuery:0
 }
 
 const queryVideoSlice = createSlice({
@@ -30,8 +31,13 @@ const queryVideoSlice = createSlice({
             newState.isLoading = action.payload
             return newState
         },
+        setCountQuery: (state, action) => {
+            let newState = { ...state }
+            newState.countQuery = action.payload
+            return newState
+        },
     },
 });
 const { reducer } = queryVideoSlice;
-export const { setKeySearch, setListVideo, setSuggesstion, setLoading } = queryVideoSlice.actions;
+export const { setKeySearch, setListVideo, setSuggesstion, setLoading, setCountQuery } = queryVideoSlice.actions;
 export default reducer;

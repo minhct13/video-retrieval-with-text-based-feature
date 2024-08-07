@@ -23,6 +23,7 @@
     z-index: 3;
     height: 10rem;
     width: 100%;
+    background-color: black;
 }
 
 .topLayer {
