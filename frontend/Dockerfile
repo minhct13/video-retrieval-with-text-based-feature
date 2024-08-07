@@ -5,7 +5,8 @@ USER node
 COPY --chown=node:node package.json package-lock.json* ./
 RUN npm install 
 COPY --chown=node:node . .
-RUN npm run dev 
+EXPOSE 80
+CMD ["npm", "run", "dev"]
 # RUN npm run build 
 
 # FROM nginx:alpine
