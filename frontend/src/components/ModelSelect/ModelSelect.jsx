@@ -6,11 +6,13 @@ import { FiFramer } from "react-icons/fi";
 import { PiTextT } from "react-icons/pi";
 import styles from "./ModelSelect.module.css";
 import { getVideoAction } from "../../Redux/Actions/QueryVideoActions";
+import { setMode } from "../../Redux/slices/QueryVideoSlice";
 
 const ModelSelect = (props) => {
   const dispatch = useDispatch();
   const { isOpen, setOpenSelect } = props;
-  const { query } = useSelector((state) => state.queryVideoSlice);
+  const { query, mode } = useSelector((state) => state.queryVideoSlice);
+  console.log("mode:", mode);
   const handleChangeMode = (value) => {
     dispatch(
       getVideoAction({
@@ -18,14 +20,15 @@ const ModelSelect = (props) => {
         mode: value,
       })
     );
+    dispatch(setMode(value));
     setOpenSelect(false);
-  }
+  };
   return (
     <>
       <Popover
         isOpen={isOpen}
         positions={["top", "bottom", "left", "right"]}
-        containerStyle = {{zIndex:50}}
+        containerStyle={{ zIndex: 50 }}
         content={
           <div className={styles["listModel"]}>
             <div className={styles.listModelContainer}>
@@ -62,7 +65,7 @@ const ModelSelect = (props) => {
             }
             onClick={() => setOpenSelect(true)}
           >
-            <p>ChatGPT</p>
+            <p>{mode === "text" ? "Text features" : "Keyframe"}</p>
             <IoIosArrowDown />
           </div>
         </div>
