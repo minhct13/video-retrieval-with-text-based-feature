@@ -12,7 +12,6 @@ const ModelSelect = (props) => {
   const dispatch = useDispatch();
   const { isOpen, setOpenSelect } = props;
   const { query, mode } = useSelector((state) => state.queryVideoSlice);
-  console.log("mode:", mode);
   const handleChangeMode = (value) => {
     dispatch(
       getVideoAction({
