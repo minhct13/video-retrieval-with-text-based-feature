@@ -4,7 +4,7 @@ services:
   uidemo:
       stdin_open: true
       container_name: uidemo-container-demo
-      image: "uidemo-image-demo"
+      image: "uidemo-image"
       build:
         context: .
         dockerfile: Dockerfile
@@ -15,4 +15,4 @@ services:
         - '.:/uidemo'
         - '/uidemo/node_modules'
       ports:
-        - "8001:5173"
+        - "80:80"
