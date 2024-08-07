@@ -19,8 +19,9 @@
     color:rgba(155, 155, 155, 1);
     text-align: left;
     margin-bottom: 1rem;
-    font-size: 14px;
+    font-size: 17px;
     margin-left: 1%;
+    font-family: "Roboto Mono", monospace;
 }
 .emptyData{
     color:rgba(155, 155, 155, 1);
@@ -44,6 +45,6 @@
 }
 @media only screen and (max-width: 400px) {
     .resultQuery{
-        font-size: 12px;
+        font-size: 14px;
     }
 }
