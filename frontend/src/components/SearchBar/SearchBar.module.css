@@ -3,13 +3,14 @@
     margin-left: auto;
     margin-right: auto;
     margin-top: 3rem;
-    position: sticky;
+    position: fixed;
     bottom: 0%;
     background-color: #1f1f1f !important;
     z-index: 1000;
     display: flex;
     justify-content: center;
     padding-bottom: 1rem;
+    flex-wrap: wrap;
 }
 
 .container {
@@ -51,14 +52,8 @@
 }
 
 @media only screen and (max-width: 768px) {
-    .searchBar {
-        width: 100%;
-    }
-
-    .container {
-
+    .container,    .searchBar  {
         width: 90%;
-
     }
 }
 

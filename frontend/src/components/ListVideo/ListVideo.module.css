@@ -21,6 +21,7 @@
     margin-bottom: 1rem;
     font-size: 17px;
     margin-left: 1%;
+    font-family: "Roboto Mono", monospace;
 }
 .emptyData{
     color:rgba(155, 155, 155, 1);
