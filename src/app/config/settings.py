@@ -17,8 +17,6 @@ class Config():
 
     SERVICE_NAME = environ["SERVICE_NAME"]
 
-
-
     # DB centrialization
     SQLALCHEMY_DATABASE_URI = \
         f"postgresql://{DEFAULT_USER}:{DEFAULT_PASSWORD}@{DEFAULT_HOST}/{DEFAULT_DB}"
@@ -36,7 +34,7 @@ class Config():
         "max_overflow": 10,
         "pool_recycle": SQLALCHEMY_POOL_RECYCLE
     }
-    VIDEO_URL="https://68dd-2405-4802-80ec-2fa0-417e-cce4-d1b6-abb.ngrok-free.app"
+    VIDEO_URL="https://bd39-2405-4802-80ec-2fa0-417e-cce4-d1b6-abb.ngrok-free.app"
 
 class DevelopmentConfig(Config):
     MINIO_SECURE = False

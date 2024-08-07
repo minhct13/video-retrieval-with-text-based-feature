@@ -11,7 +11,7 @@ video_bp = Blueprint('video_bp', __name__)
 def query():
     body = request.get_json()
     query = body.get("query", None)
-    top_n = body.get("top_n", 16)
+    top_n = body.get("top_n", 50)
     if not query:
         return "", requests.codes.ok
     res, code = VideoService().query(query, top_n)

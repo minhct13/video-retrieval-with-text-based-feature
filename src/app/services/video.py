@@ -48,7 +48,7 @@ class VideoService:
             aggregated_vectors.append(aggregated_vector)
         return np.array(aggregated_vectors)
 
-    def query(self, queries: str, top_n=16):
+    def query(self, queries: str, top_n=20):
         """Retrieve video names and paths based on the query.
 
         Args:
