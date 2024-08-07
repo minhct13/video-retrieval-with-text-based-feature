@@ -51,4 +51,4 @@ if __name__ == "__main__":
     convert_txt_to_json(args.text_dir)
 
 
-# python scripts/convert_txt_to_json.py --text_dir ../data/output
+# python scripts/convert_txt_to_json.py --text_dir ../data/kaggle/working/output

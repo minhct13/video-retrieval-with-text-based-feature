@@ -17,8 +17,6 @@ class Config():
 
     SERVICE_NAME = environ["SERVICE_NAME"]
 
-
-
     # DB centrialization
     SQLALCHEMY_DATABASE_URI = \
         f"postgresql://{DEFAULT_USER}:{DEFAULT_PASSWORD}@{DEFAULT_HOST}/{DEFAULT_DB}"
@@ -26,7 +24,7 @@ class Config():
     VIDEO_DIR = environ["VIDEO_DIR"]
     # Set below value less than HAproxy client timeout
     # to avoid connection being killed while using
-    SQLALCHEMY_POOL_RECYCLE = 300 # 5 mins
+    SQLALCHEMY_POOL_RECYCLE = 300 # 5 mins                                            
     SQLALCHEMY_ECHO = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     CHECKPOINT_PATH = "pretrain_clipvip_base_16.pt"
@@ -36,7 +34,7 @@ class Config():
         "max_overflow": 10,
         "pool_recycle": SQLALCHEMY_POOL_RECYCLE
     }
-    VIDEO_URL="https://7ba4-2405-4802-80ec-2fa0-48db-e50b-255-4e6f.ngrok-free.app"
+    VIDEO_URL="https://bd39-2405-4802-80ec-2fa0-417e-cce4-d1b6-abb.ngrok-free.app"
 
 class DevelopmentConfig(Config):
     MINIO_SECURE = False

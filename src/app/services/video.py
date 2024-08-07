@@ -48,7 +48,7 @@ class VideoService:
             aggregated_vectors.append(aggregated_vector)
         return np.array(aggregated_vectors)
 
-    def query(self, queries: str, top_n=16):
+    def query(self, queries: str, top_n=20):
         """Retrieve video names and paths based on the query.
 
         Args:
@@ -86,8 +86,8 @@ class VideoService:
         """
         return {
             "data" : [
-                "What are the main actions or activities happening in the video?",
-                "Who are the main characters or subjects appearing in the video?",
+                "Playing tennis",
+                "",
                 "What is the setting or location where the video takes place?",
                 "What objects or items are prominently featured in the video?",
                 "What is the overall mood or atmosphere of the video?",
