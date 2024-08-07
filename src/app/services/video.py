@@ -86,11 +86,11 @@ class VideoService:
         """
         return {
             "data" : [
-                "Playing tennis",
-                "",
-                "What is the setting or location where the video takes place?",
-                "What objects or items are prominently featured in the video?",
-                "What is the overall mood or atmosphere of the video?",
+                "A man is singing and standing in the road",
+                "Three woman doing a fashion show to music",
+                "Cartoon birds are flying",
+                "Two astronauts experiencing a tense situation before relaxing afterwards",
+                "A guy reports on complex news",
             ]
         }, requests.codes.ok
 
