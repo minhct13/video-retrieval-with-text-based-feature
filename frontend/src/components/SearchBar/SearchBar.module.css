@@ -1,15 +1,20 @@
 .searchBar {
-    width: 60%;
+    width: 100%;
     margin-left: auto;
     margin-right: auto;
     margin-top: 3rem;
     position: sticky;
-    bottom: 2%;
+    bottom: 0%;
+    background-color: #1f1f1f !important;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 1rem;
 }
 
 .container {
     display: flex;
-    width: 100%;
+    width: 60%;
     background-color: #2f2f2f;
     padding: 0.5rem 1rem;
     border-radius: 26px;
