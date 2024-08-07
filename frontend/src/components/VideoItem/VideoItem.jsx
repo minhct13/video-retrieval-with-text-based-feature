@@ -3,14 +3,11 @@ import { useState } from 'react';
 import ReactPlayer from 'react-player'
 import styles from './VideoItem.module.css'
 import PopupVideo from './PopupVideo'
-// import { VITE_API_URL } from '../../config'
 
 function VideoItem(props) {
     const { link, title, similarity } = props
     const [isOpenPopup, setIsOpenPopup] = useState(false)
-    const onSetOpenPopup = (value) => {
-        setIsOpenPopup(value)
-    }
+    const onSetOpenPopup = (value) => setIsOpenPopup(value)
     return (
         <div className={styles.videoItem}>
             <div className={styles.videoPlayer}>
@@ -27,9 +24,9 @@ function VideoItem(props) {
                 <div className={styles.topLayer} onClick={() => onSetOpenPopup(true)}>
                 </div>
             </div>
-            <div>
+            <div className={styles.videoInfo}>
                 <p className={styles.title}>{title}</p>
-                <p className={styles.similarity}>Similarity: {similarity}</p>
+                <p className={styles.similarity}>{similarity.toFixed(2)}</p>
             </div>
             <PopupVideo
                 isOpen={isOpenPopup}

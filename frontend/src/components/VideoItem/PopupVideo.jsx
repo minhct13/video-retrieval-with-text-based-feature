@@ -4,7 +4,6 @@ import 'react-responsive-modal/styles.css'
 import { Modal } from 'react-responsive-modal'
 import ReactPlayer from 'react-player'
 import styles from './VideoItem.module.css'
-// import { VITE_API_URL } from '../../config'
 
 function PopupVideo(props) {
     const { isOpen, link, onSetOpenPopup } = props

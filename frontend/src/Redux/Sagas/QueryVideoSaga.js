@@ -18,7 +18,7 @@ function* handleGetVideosApi(action) {
         yield put(setLoading(false))
     } catch (error) {
         yield put(setLoading(false))
-        toast('System error:', error)
+        toast('System error:', error.message)
     }
 }
 function* handleGetSuggestionApi() {
@@ -27,15 +27,17 @@ function* handleGetSuggestionApi() {
         if (res.data && res.data.data) {
             const convertData = []
             res.data.data.forEach(el => {
-                convertData.push({
-                    id: uuidv4(),
-                    name: el
-                })
+                if(el){
+                    convertData.push({
+                        id: uuidv4(),
+                        name: el
+                    })
+                }
             })
             yield put(setSuggesstion(convertData))
         }
     } catch (error) {
-        toast('System error:', error)
+        toast('System error:', error.message)
     }
 }
 function* getVideosSaga() {
