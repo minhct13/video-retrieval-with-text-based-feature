@@ -3,6 +3,8 @@
     margin-left: auto;
     margin-right: auto;
     margin-top: 3rem;
+    position: sticky;
+    bottom: 2%;
 }
 
 .container {
