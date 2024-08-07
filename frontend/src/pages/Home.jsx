@@ -1,53 +1,30 @@
+import { useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import Introduction from '../components/Introduction/Introduction'
 import ListVideo from '../components/ListVideo/ListVideo'
+import SearchBar from '../components/SearchBar/SearchBar'
 import ListSuggestion from '../components/Suggestion/ListSuggestion'
 import styles from './Home.module.css'
+import { getSuggestion } from '../Redux/Actions/QueryVideoActions'
 
 function Home() {
-    const fakeData = [
-        {
-            id: 1,
-            link: "https://www.youtube.com/watch?v=oUFJJNQGwhk'",
-            title: "video 1"
-        },
-        {
-            id: 2,
-            link: "https://www.youtube.com/watch?v=oUFJJNQGwhk'",
-            title: "video 2"
-        },
-        {
-            id: 3,
-            link: "https://www.youtube.com/watch?v=oUFJJNQGwhk'",
-            title: "video 3"
-        },
-        {
-            id: 4,
-            link: "https://www.youtube.com/watch?v=oUFJJNQGwhk'",
-            title: "video 4"
-        },
-        {
-            id:5,
-            link: "https://www.youtube.com/watch?v=oUFJJNQGwhk'",
-            title: "video 5"
-        },
-        {
-            id: 6,
-            link: "https://www.youtube.com/watch?v=oUFJJNQGwhk'",
-            title: "video 6"
-        },
-        {
-            id: 7,
-            link: "https://www.youtube.com/watch?v=oUFJJNQGwhk'",
-            title: "video 7"
-        },
-    ]
+    const dispatch = useDispatch()
+    useEffect(() => {
+        dispatch(getSuggestion())
+    }, [])
+    const { videos } = useSelector((state) => state.queryVideoSlice)
+    
     return (
         <div className={styles.home}>
             <Introduction />
             <ListVideo
-                videos={fakeData}
+                videos={videos}
             />
             <ListSuggestion />
+            <SearchBar />
+            <ToastContainer />
         </div>
     )
 }

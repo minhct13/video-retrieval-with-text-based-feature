@@ -1,8 +1,74 @@
-.videoItem{
+.videoItem {
     margin-bottom: 1rem;
 }
-.title{
+
+.title {
     text-align: left;
     margin-top: 0;
-    color: rgba(155,155,155,1);
+    color: rgba(155, 155, 155, 1);
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.videoPlayer {
+    position: relative;
+    height: 10rem;
+    width: 100%;
+}
+
+.videoMedia {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 3;
+    height: 10rem;
+    width: 100%;
+}
+
+.topLayer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 999;
+    height: 10rem;
+    width: 100%;
+    cursor: pointer;
+}
+
+.showVideo {
+    margin-top: 2rem;
+}
+
+.customModal {
+    border-radius: 10px;
+    background-color: #202123 !important;
+    min-width: 60vw;
+}
+
+.reactPlayer>* {
+    /* border-radius: 10px !important; */
+}
+
+.closeIcon {
+    color: rgba(155, 155, 155, 1);
+    font-size: 18px;
+}
+
+.reactPlayer>video {
+    /* height: 100% !important; */
+}
+.similarity{
+    text-align: left;
+    margin-top: 0;
+    color: rgba(155, 155, 155, 1);
+    font-size: 14px;
+}
+.videoInfo{
+    display: flex;
+    justify-content: space-between;
+}
+@media only screen and (max-width: 400px) {
+    .title {
+        font-size: 12px;
+    }
 }
