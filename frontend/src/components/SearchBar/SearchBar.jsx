@@ -8,7 +8,7 @@ import ModelSelect from '../ModelSelect/ModelSelect'
 
 function SearchBar() {
   const dispatch = useDispatch()
-  const { keySearch } = useSelector((state) => state.queryVideoSlice)
+  const { keySearch, mode } = useSelector((state) => state.queryVideoSlice)
   const [isOpenSelect, setOpenSelect] = useState(false)
   const onChangeKeySearch = (e) => {
     dispatch(setKeySearch(e.target.value))
@@ -16,7 +16,8 @@ function SearchBar() {
 
   const handleQuery = () => {
     dispatch(getVideoAction({
-      query: keySearch
+      query: keySearch,
+      mode
     }))
   }
 

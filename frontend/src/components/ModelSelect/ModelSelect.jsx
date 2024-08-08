@@ -5,20 +5,13 @@ import { IoIosArrowDown } from "react-icons/io";
 import { FiFramer } from "react-icons/fi";
 import { PiTextT } from "react-icons/pi";
 import styles from "./ModelSelect.module.css";
-import { getVideoAction } from "../../Redux/Actions/QueryVideoActions";
 import { setMode } from "../../Redux/slices/QueryVideoSlice";
 
 const ModelSelect = (props) => {
   const dispatch = useDispatch();
   const { isOpen, setOpenSelect } = props;
-  const { query, mode } = useSelector((state) => state.queryVideoSlice);
+  const { mode } = useSelector((state) => state.queryVideoSlice);
   const handleChangeMode = (value) => {
-    dispatch(
-      getVideoAction({
-        query: query,
-        mode: value,
-      })
-    );
     dispatch(setMode(value));
     setOpenSelect(false);
   };
