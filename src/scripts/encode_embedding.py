@@ -14,47 +14,46 @@ session = Session()
 
 def save_video_embedding(session, video_name, video_path, video_vector, text_vectors, text_probs):
     # Check if the video already exists
-    existing_video = session.query(Video).filter_by(name=video_name).first()
-    if existing_video:
+    # existing_video = session.query(Video).filter_by(name=video_name).first()
+    # if existing_video:
         # Update existing record
-        existing_video.path = video_path
-        existing_video.video_vector = video_vector
-        existing_video.text_vector_1 = text_vectors[0]
-        existing_video.text_vector_2 = text_vectors[1]
-        existing_video.text_vector_3 = text_vectors[2]
-        existing_video.text_vector_4 = text_vectors[3]
-        existing_video.text_vector_5 = text_vectors[4]
-        existing_video.text_prob_1 = text_probs[0]
-        existing_video.text_prob_2 = text_probs[1]
-        existing_video.text_prob_3 = text_probs[2]
-        existing_video.text_prob_4 = text_probs[3]
-        existing_video.text_prob_5 = text_probs[4]
-    else:
+    #     existing_video.path = video_path
+    #     existing_video.video_vector = video_vector
+    #     existing_video.text_vector_1 = text_vectors[0]
+    #     existing_video.text_vector_2 = text_vectors[1]
+    #     existing_video.text_vector_3 = text_vectors[2]
+    #     existing_video.text_vector_4 = text_vectors[3]
+    #     existing_video.text_vector_5 = text_vectors[4]
+    #     existing_video.text_prob_1 = text_probs[0]
+    #     existing_video.text_prob_2 = text_probs[1]
+    #     existing_video.text_prob_3 = text_probs[2]
+    #     existing_video.text_prob_4 = text_probs[3]
+    #     existing_video.text_prob_5 = text_probs[4]
+    # else:
         # Create new record
-        video = Video(
-            name=video_name,
-            path=video_path,
-            video_vector=video_vector,
-            text_vector_1=text_vectors[0],
-            text_vector_2=text_vectors[1],
-            text_vector_3=text_vectors[2],
-            text_vector_4=text_vectors[3],
-            text_vector_5=text_vectors[4],
-            text_prob_1=text_probs[0],
-            text_prob_2=text_probs[1],
-            text_prob_3=text_probs[2],
-            text_prob_4=text_probs[3],
-            text_prob_5=text_probs[4]
-        )
-        session.add(video)
+    video = Video(
+        name=video_name,
+        path=video_path,
+        video_vector=video_vector,
+        text_vector_1=text_vectors[0],
+        text_vector_2=text_vectors[1],
+        text_vector_3=text_vectors[2],
+        text_vector_4=text_vectors[3],
+        text_vector_5=text_vectors[4],
+        text_prob_1=text_probs[0],
+        text_prob_2=text_probs[1],
+        text_prob_3=text_probs[2],
+        text_prob_4=text_probs[3],
+        text_prob_5=text_probs[4]
+    )
+    session.add(video)
     session.commit()
     session.close()
 
-        
 
 def process_video(es, session, video_path, text_vectors, text_probs):
-    video_vector = es.encode_video(video_path)
     video_name = os.path.basename(video_path)
+    video_vector = es.encode_video(video_path)
     save_video_embedding(
         session=session,
         video_name=video_name,
@@ -86,17 +85,25 @@ if __name__ == "__main__":
     es.init_app(args.checkpoint)
 
     # Load the video-text data from the JSON directory
-    video_text_data = load_json_files(args.json_dir)
-    
+    video_text_data = load_json_files(args.json_dir)    
     video_files = [os.path.join(args.video_dir, f) for f in os.listdir(args.video_dir) if f.endswith(".mp4")]
 
 
     # with ThreadPoolExecutor() as executor:
         # futures = []
+i = 0
 for video_path in video_files:
-    video_name = os.path.basename(video_path).replace(".mp4", "")
+    video_name = os.path.basename(video_path)
+    existing_video = session.query(Video).filter_by(name=video_name).first()
+    if existing_video:
+        i+= 1
+        print(f"SKIP {video_name}", i)
+        continue 
+    
+    video_name = video_name.replace(".mp4", "")
     if video_name not in video_text_data:
         continue
+    
 
     texts = video_text_data[video_name]
     text_vectors = [es.encode_text(text["answer"]) for text in texts]
