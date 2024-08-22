@@ -108,12 +108,20 @@ def generate_subtitles(video_path):
         print("error",video_path)
         return None
     
+# QUESTIONS = [
+#     "What are the main actions or activities happening in the video?",
+#     "Who are the main characters or subjects appearing in the video?",
+#     "What is the setting or location where the video takes place?",
+#     "What objects or items are prominently featured in the video?",
+#     "What is the overall mood or atmosphere of the video?",
+# ]
+
 QUESTIONS = [
-    "What are the main actions or activities happening in the video?",
-    "Who are the main characters or subjects appearing in the video?",
-    "What is the setting or location where the video takes place?",
-    "What objects or items are prominently featured in the video?",
-    "What is the overall mood or atmosphere of the video?",
+    "What is the primary emotion expressed by the person in the video? Emotions could include happiness, sadness, anger, surprise, fear, disgust, or neutrality. Example Answer: The person displays happiness with a broad smile and slightly squinted eyes",
+    "What are the distinct facial attributes or features visible in the video? Attributes may include facial hair, glasses, skin tone, wrinkles, scars, makeup, or any other distinctive features. Example Answer: The person has a light beard, wears thin-rimmed glasses, and has a prominent mole on the left cheek.",
+    "How does the person's facial expression change over the course of the video? considers whether the expression is static or if there are changes, such as a transition from a neutral expression to a smile or from surprise to fear. Example Answer: The person initially has a neutral expression, then raises their eyebrows and smiles slightly by the end of the video.",
+    "Are there any noticeable interactions or movements involving the face (e.g., blinking, speaking, etc.)? Example Answer: The person blinks several times and then begins to speak, with their mouth movements clearly visible.",
+    "What is the orientation or angle of the person's face relative to the camera? Example Answer: The face is primarily shown from a three-quarter view, with the head slightly turned to the right.",
 ]
 
 def save_to_json(args, save_path, video_name, answers):
@@ -134,13 +142,13 @@ def save_to_json(args, save_path, video_name, answers):
 import os
 from time import time
 def run(video_dir, instruction, model, vis_processor, gen_subtitles=False, index=0, json_file_path=None):
-    QUESTIONS = [
-        "What are the main actions or activities happening in the video?",
-        "Who are the main characters or subjects appearing in the video?",
-        "What is the setting or location where the video takes place?",
-        "What objects or items are prominently featured in the video?",
-        "What is the overall mood or atmosphere of the video?"
-    ]
+    # QUESTIONS = [
+    #     "What are the main actions or activities happening in the video?",
+    #     "Who are the main characters or subjects appearing in the video?",
+    #     "What is the setting or location where the video takes place?",
+    #     "What objects or items are prominently featured in the video?",
+    #     "What is the overall mood or atmosphere of the video?"
+    # ]
     
     # Load the JSON file to get the list of videos to process
     if json_file_path:
