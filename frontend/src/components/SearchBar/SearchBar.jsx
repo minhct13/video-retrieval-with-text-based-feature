@@ -6,6 +6,7 @@ import styles from './SearchBar.module.css'
 import { setKeySearch } from '../../Redux/slices/QueryVideoSlice'
 import { getVideoAction } from '../../Redux/Actions/QueryVideoActions'
 import ModelSelect from '../ModelSelect/ModelSelect'
+import AttachFileBtn from './AttachFileBtn';
 
 function SearchBar() {
   const dispatch = useDispatch()
@@ -33,7 +34,7 @@ function SearchBar() {
         setOpenSelect={setOpenSelect}
       />
       <div className={styles.container}>
-        <GrAttachment className={styles.attachIcon}/>
+        <AttachFileBtn />
         <input
           className={styles.inputQuerry}
           placeholder='Search'
