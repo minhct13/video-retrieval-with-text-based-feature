@@ -20,8 +20,13 @@
     padding: 0.5rem 1rem;
     border-radius: 26px;
     justify-content: space-between;
+    align-items: center;
 }
-
+.attachIcon{
+    margin-right: 5px;
+    color: rgba(155, 155, 155, 1);
+    cursor: pointer;
+}
 .inputQuerry {
     background-color: transparent;
     border: none;

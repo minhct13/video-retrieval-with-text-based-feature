@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { GrAttachment } from "react-icons/gr";
 import icon from '../../assets/arrowUp.svg'
 import styles from './SearchBar.module.css'
 import { setKeySearch } from '../../Redux/slices/QueryVideoSlice'
@@ -24,14 +25,15 @@ function SearchBar() {
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') handleQuery()
   }
-  
+
   return (
     <div className={styles.searchBar}>
-      <ModelSelect 
-      isOpen = {isOpenSelect}
-      setOpenSelect = {setOpenSelect}
+      <ModelSelect
+        isOpen={isOpenSelect}
+        setOpenSelect={setOpenSelect}
       />
       <div className={styles.container}>
+        <GrAttachment className={styles.attachIcon}/>
         <input
           className={styles.inputQuerry}
           placeholder='Search'
