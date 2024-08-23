@@ -46,18 +46,11 @@
     min-width: 60vw;
 }
 
-.reactPlayer>* {
-    /* border-radius: 10px !important; */
-}
-
 .closeIcon {
     color: rgba(155, 155, 155, 1);
     font-size: 18px;
 }
 
-.reactPlayer>video {
-    /* height: 100% !important; */
-}
 .similarity{
     text-align: left;
     margin-top: 0;

@@ -1,6 +1,6 @@
 import { all, put, call, takeEvery, select } from 'redux-saga/effects'
 import { v4 as uuidv4 } from 'uuid'
-import { getVideoAction, getSuggestion } from '../Actions/QueryVideoActions'
+import { getVideoAction, getSuggestion, sendImg } from '../Actions/QueryVideoActions'
 import { setLoading, setListVideo, setSuggesstion, setCountQuery, setQuery } from '../slices/QueryVideoSlice'
 import { Service } from '../../Services/QueryVideoServices'
 import { toast } from 'react-toastify'
@@ -44,16 +44,38 @@ function* handleGetSuggestionApi() {
         toast('System error:', error.message)
     }
 }
+function* handleSendImgApi() {
+    try {
+        // const res = yield call(Service.getSuggestionsApi)
+        // if (res.data && res.data.data) {
+        //     const convertData = []
+        //     res.data.data.forEach(el => {
+        //         if (el) {
+        //             convertData.push({
+        //                 id: uuidv4(),
+        //                 name: el
+        //             })
+        //         }
+        //     })
+        //     yield put(setSuggesstion(convertData))
+        // }
+    } catch (error) {
+        toast('System error:', error.message)
+    }
+}
 function* getVideosSaga() {
     yield takeEvery(getVideoAction, handleGetVideosApi)
 }
 function* getSuggestionSaga() {
     yield takeEvery(getSuggestion, handleGetSuggestionApi)
 }
-
+function* sendImgSaga() {
+    yield takeEvery(sendImg, handleSendImgApi)
+}
 export function* queryVideosSagaList() {
     yield all([
         getVideosSaga(),
-        getSuggestionSaga()
+        getSuggestionSaga(),
+        sendImgSaga()
     ])
 }

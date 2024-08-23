@@ -22,11 +22,13 @@
     justify-content: space-between;
     align-items: center;
 }
-.attachIcon{
+
+.attachIcon {
     margin-right: 5px;
     color: rgba(155, 155, 155, 1);
     cursor: pointer;
 }
+
 .inputQuerry {
     background-color: transparent;
     border: none;
@@ -55,9 +57,48 @@
     width: 2rem;
     height: 2rem;
 }
+.div_previewImg{
+    margin-top: 1rem;
+}
+.previewImg {
+    height: 10rem;
+    width: auto;
+}
+
+.listPreviewBtn {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+
+    >div {
+        cursor: pointer;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+
+        >p {
+            margin: 0;
+            font-family: "Roboto Mono", monospace;
+            font-optical-sizing: auto;
+            font-style: normal;
+            font-size: 14px;
+        }
+    }
+}
+
+.cancelBtn {
+    background-color: rgba(155, 155, 155, 1);
+    margin-right: 5px;
+}
+
+.sendBtn {
+    background-color: #1f1f1f;
+    color: white;
+}
 
 @media only screen and (max-width: 768px) {
-    .container,    .searchBar  {
+
+    .container,
+    .searchBar {
         width: 90%;
     }
 }
@@ -66,10 +107,12 @@
     .inputQuerry {
         font-size: 12px;
     }
+
     .queryBtn {
         width: 25px;
         height: 25px;
     }
+
     .iconQuery {
         width: 25px;
         height: 25px;

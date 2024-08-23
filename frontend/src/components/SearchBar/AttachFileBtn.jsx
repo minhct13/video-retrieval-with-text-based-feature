@@ -1,8 +1,20 @@
-import React from 'react'
-import { GrAttachment } from "react-icons/gr";
+import React, { useState } from 'react'
+import { GrAttachment } from "react-icons/gr"
 import styles from './SearchBar.module.css'
+import PopupConfirmImage from './PopupConfirmImage'
 
-const AttachFileBtn = (props) => {
+const AttachFileBtn = () => {
+    const [isOpenConfirm, setIsOpenConfirm] = useState(false)
+    const [file, setFile] = useState(null)
+    const handleImageChange = (event) => {
+        const file = event.target.files[0]
+        const { target = {} } = event || {};
+        target.value = "";
+        if (file && file.type.includes('image')) {
+            setFile(file)
+            setIsOpenConfirm(true)
+        }
+    }
     return (
         <>
             <label htmlFor='btnAttach'>
@@ -12,11 +24,16 @@ const AttachFileBtn = (props) => {
                 hidden
                 type='file'
                 id='btnAttach'
+                onInput={handleImageChange}
+            />
+            <PopupConfirmImage
+                isOpen={isOpenConfirm}
+                setOpen={setIsOpenConfirm}
+                file={file}
+                setFile={setFile}
             />
         </>
     );
 };
-
-
 
 export default AttachFileBtn;
