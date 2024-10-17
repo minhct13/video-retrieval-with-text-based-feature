@@ -1,20 +1,22 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Modal } from 'react-responsive-modal'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { MdClose } from 'react-icons/md'
 import styles from './SearchBar.module.css'
 // import { sendImg } from '../../Redux/Actions/QueryVideoActions'
 import { getVideoAction } from '../../Redux/Actions/QueryVideoActions'
+import { setQueryImg, setKeySearch } from '../../Redux/slices/QueryVideoSlice'
 
 const PopupConfirmImage = (props) => {
     const { isOpen, setOpen, file, setFile } = props
     const dispatch = useDispatch()
-    const [query, setQuery] = useState('')
-
+    const { queryImg } = useSelector((state) => state.queryVideoSlice)
+    
     useEffect(() => {
         if (!isOpen) {
-            setQuery('')
+            dispatch(setQueryImg(''))
             setFile(null)
         }
     }, [isOpen])
@@ -25,13 +27,14 @@ const PopupConfirmImage = (props) => {
     }
 
     const onChangeQuery = (e) => {
-        setQuery(e.target.value)
+        dispatch(setQueryImg(e.target.value))
     }
 
     const onSend = () => {
         const formData = new FormData()
-        formData.append('query', query)
+        formData.append('query', queryImg)
         formData.append('image', file)
+        dispatch(setKeySearch(''))
         dispatch(getVideoAction({
             query: "",
             formData
@@ -61,7 +64,7 @@ const PopupConfirmImage = (props) => {
                     className={styles.imgSearch}
                     placeholder='query'
                     alt='image query'
-                    value={query}
+                    value={queryImg}
                     onChange={onChangeQuery}
                 />
             </div>

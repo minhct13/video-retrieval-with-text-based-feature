@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 // import { GrAttachment } from "react-icons/gr";
 import icon from '../../assets/arrowUp.svg'
 import styles from './SearchBar.module.css'
-import { setKeySearch } from '../../Redux/slices/QueryVideoSlice'
+import { setKeySearch, setQueryImg } from '../../Redux/slices/QueryVideoSlice'
 import { getVideoAction } from '../../Redux/Actions/QueryVideoActions'
 // import ModelSelect from '../ModelSelect/ModelSelect'
 import AttachFileBtn from './AttachFileBtn';
@@ -17,6 +17,7 @@ function SearchBar() {
   }
 
   const handleQuery = () => {
+    dispatch(setQueryImg(''))
     const formData = new FormData()
     formData.append('mode', mode)
     formData.append('query', keySearch)
