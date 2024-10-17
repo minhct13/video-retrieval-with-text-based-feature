@@ -1,4 +1,4 @@
-import { instance } from './configAxios'
+import { instance , instanceForm } from './configAxios'
 export const Service = {
     getSuggestionsApi,
     getVideosApi,
@@ -11,5 +11,5 @@ function getSuggestionsApi() {
     return instance.get(`${servicePattern.getSuggestion}`)
 }
 function getVideosApi(data) {
-    return instance.post(servicePattern.getVideos, data)
+    return instanceForm.post(servicePattern.getVideos, data)
 }

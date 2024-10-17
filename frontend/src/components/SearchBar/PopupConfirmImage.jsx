@@ -1,23 +1,44 @@
-import React from 'react';
+/* eslint-disable react/prop-types */
+import { useState, useEffect } from 'react';
 import { Modal } from 'react-responsive-modal'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { MdClose } from 'react-icons/md'
 import styles from './SearchBar.module.css'
-import { sendImg } from '../../Redux/Actions/QueryVideoActions'
+// import { sendImg } from '../../Redux/Actions/QueryVideoActions'
+import { getVideoAction } from '../../Redux/Actions/QueryVideoActions'
 
 const PopupConfirmImage = (props) => {
     const { isOpen, setOpen, file, setFile } = props
     const dispatch = useDispatch()
+    const [query, setQuery] = useState('')
+
+    useEffect(() => {
+        if (!isOpen) {
+            setQuery('')
+            setFile(null)
+        }
+    }, [isOpen])
+
     const handleClose = () => {
         setOpen(false)
         setFile(null)
     }
-    const onSend = () => {
-        const payload = {
 
-        }
-        dispatch(sendImg(payload))
+    const onChangeQuery = (e) => {
+        setQuery(e.target.value)
     }
+
+    const onSend = () => {
+        const formData = new FormData()
+        formData.append('query', query)
+        formData.append('image', file)
+        dispatch(getVideoAction({
+            query: "",
+            formData
+        }))
+        setOpen(false)
+    }
+
     return (
         <Modal
             open={isOpen}
@@ -33,6 +54,15 @@ const PopupConfirmImage = (props) => {
                     className={styles.previewImg}
                     src={file ? URL.createObjectURL(file) : null}
                     alt='image preview'
+                />
+            </div>
+            <div>
+                <input
+                    className={styles.imgSearch}
+                    placeholder='query'
+                    alt='image query'
+                    value={query}
+                    onChange={onChangeQuery}
                 />
             </div>
             <div className={styles.listPreviewBtn}>
