@@ -23,6 +23,7 @@ const PopupConfirmImage = (props) => {
 
     const handleClose = () => {
         setOpen(false)
+        dispatch(setQueryImg(''))
         setFile(null)
     }
 
