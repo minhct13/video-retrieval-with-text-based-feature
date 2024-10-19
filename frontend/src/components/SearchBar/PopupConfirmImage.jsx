@@ -7,24 +7,25 @@ import { MdClose } from 'react-icons/md'
 import styles from './SearchBar.module.css'
 // import { sendImg } from '../../Redux/Actions/QueryVideoActions'
 import { getVideoAction } from '../../Redux/Actions/QueryVideoActions'
-import { setQueryImg, setKeySearch } from '../../Redux/slices/QueryVideoSlice'
+import { setQueryImg, setKeySearch, setFile } from '../../Redux/slices/QueryVideoSlice'
 
 const PopupConfirmImage = (props) => {
-    const { isOpen, setOpen, file, setFile } = props
+    const { isOpen, setOpen, fileState, setFileState } = props
     const dispatch = useDispatch()
+    const { file } = useSelector((state) => state.queryVideoSlice)
     const { queryImg } = useSelector((state) => state.queryVideoSlice)
-    
+  
     useEffect(() => {
         if (!isOpen) {
             dispatch(setQueryImg(''))
-            setFile(null)
+            setFileState(null)
         }
     }, [isOpen])
 
     const handleClose = () => {
         setOpen(false)
         dispatch(setQueryImg(''))
-        setFile(null)
+        setFileState(null)
     }
 
     const onChangeQuery = (e) => {
@@ -36,6 +37,7 @@ const PopupConfirmImage = (props) => {
         formData.append('query', queryImg)
         formData.append('image', file)
         dispatch(setKeySearch(''))
+        dispatch(setFile(fileState))
         dispatch(getVideoAction({
             query: "",
             formData
@@ -56,7 +58,7 @@ const PopupConfirmImage = (props) => {
             <div className={styles.div_previewImg}>
                 <img
                     className={styles.previewImg}
-                    src={file ? URL.createObjectURL(file) : null}
+                    src={fileState ? URL.createObjectURL(fileState) : null}
                     alt='image preview'
                 />
             </div>
