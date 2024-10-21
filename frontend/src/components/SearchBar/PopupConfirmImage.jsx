@@ -7,29 +7,29 @@ import { MdClose } from 'react-icons/md'
 import styles from './SearchBar.module.css'
 // import { sendImg } from '../../Redux/Actions/QueryVideoActions'
 import { getVideoAction } from '../../Redux/Actions/QueryVideoActions'
-import { setQueryImg, setKeySearch, setFile } from '../../Redux/slices/QueryVideoSlice'
+import { setQueryImg, setKeySearch, setFile, setQuery } from '../../Redux/slices/QueryVideoSlice'
 
 const PopupConfirmImage = (props) => {
     const { isOpen, setOpen, fileState, setFileState } = props
     const dispatch = useDispatch()
     const { file } = useSelector((state) => state.queryVideoSlice)
     const { queryImg } = useSelector((state) => state.queryVideoSlice)
-    const [query, setQuery] = useState('')
+    const [query, setQueryState] = useState('')
     useEffect(() => {
         if (!isOpen) {
-            setQuery('')
+            setQueryState('')
             setFileState(null)
         }
     }, [isOpen])
 
     const handleClose = () => {
         setOpen(false)
-        setQuery('')
+        setQueryState('')
         setFileState(null)
     }
 
     const onChangeQuery = (e) => {
-        setQuery(e.target.value)
+        setQueryState(e.target.value)
     }
 
     const onSend = () => {
@@ -37,6 +37,7 @@ const PopupConfirmImage = (props) => {
         formData.append('query', queryImg)
         formData.append('image', file)
         dispatch(setKeySearch(''))
+        dispatch(setQuery(''))
         dispatch(setQueryImg(query))
         dispatch(setFile(fileState))
         dispatch(getVideoAction({
