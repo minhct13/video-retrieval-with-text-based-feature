@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal } from 'react-responsive-modal'
 import { useDispatch, useSelector } from 'react-redux'
 import { MdClose } from 'react-icons/md'
@@ -14,22 +14,22 @@ const PopupConfirmImage = (props) => {
     const dispatch = useDispatch()
     const { file } = useSelector((state) => state.queryVideoSlice)
     const { queryImg } = useSelector((state) => state.queryVideoSlice)
-  
+    const [query, setQuery] = useState('')
     useEffect(() => {
         if (!isOpen) {
-            dispatch(setQueryImg(''))
+            setQuery('')
             setFileState(null)
         }
     }, [isOpen])
 
     const handleClose = () => {
         setOpen(false)
-        dispatch(setQueryImg(''))
+        setQuery('')
         setFileState(null)
     }
 
     const onChangeQuery = (e) => {
-        dispatch(setQueryImg(e.target.value))
+        setQuery(e.target.value)
     }
 
     const onSend = () => {
@@ -37,9 +37,10 @@ const PopupConfirmImage = (props) => {
         formData.append('query', queryImg)
         formData.append('image', file)
         dispatch(setKeySearch(''))
+        dispatch(setQueryImg(query))
         dispatch(setFile(fileState))
         dispatch(getVideoAction({
-            query: "",
+            query: query,
             formData
         }))
         setOpen(false)
@@ -67,7 +68,7 @@ const PopupConfirmImage = (props) => {
                     className={styles.imgSearch}
                     placeholder='query'
                     alt='image query'
-                    value={queryImg}
+                    value={query}
                     onChange={onChangeQuery}
                 />
             </div>

@@ -9,6 +9,7 @@ function* handleGetVideosApi(action) {
     yield put(setLoading(true))
     try {
         console.log('action.payload:', action.payload)
+        console.log('action.payload.query:', action.payload.query)
         const res = yield call(Service.getVideosApi, action.payload.formData)
         if (res.data && res.data.data) {
             let { countQuery } = yield select(state => state.queryVideoSlice)
