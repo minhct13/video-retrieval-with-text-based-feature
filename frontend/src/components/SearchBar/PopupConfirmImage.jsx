@@ -13,7 +13,6 @@ const PopupConfirmImage = (props) => {
     const { isOpen, setOpen, fileState, setFileState } = props
     const dispatch = useDispatch()
     const { file } = useSelector((state) => state.queryVideoSlice)
-    const { queryImg } = useSelector((state) => state.queryVideoSlice)
     const [query, setQueryState] = useState('')
     useEffect(() => {
         if (!isOpen) {
@@ -34,7 +33,7 @@ const PopupConfirmImage = (props) => {
 
     const onSend = () => {
         const formData = new FormData()
-        formData.append('query', queryImg)
+        formData.append('query', query)
         formData.append('image', file)
         dispatch(setKeySearch(''))
         dispatch(setQuery(''))
@@ -42,7 +41,8 @@ const PopupConfirmImage = (props) => {
         dispatch(setFile(fileState))
         dispatch(getVideoAction({
             query: query,
-            formData
+            formData:formData,
+            isSetQueryImage:true
         }))
         setOpen(false)
     }

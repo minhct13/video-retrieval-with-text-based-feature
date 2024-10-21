@@ -52,7 +52,6 @@ const queryVideoSlice = createSlice({
         },
         setQuery: (state, action) => {
             let newState = { ...state }
-            console.log('action.payloadxxxx:', action.payload)
             newState.query = action.payload
             return newState
         },

@@ -7,8 +7,7 @@ import Skeleton from '../../components/Skeleton/Skeleton'
 function ListVideo(props) {
     const { videos } = props
     const { isLoading, countQuery, query, queryImg, file } = useSelector((state) => state.queryVideoSlice)
-    console.log('query:', query)
-    console.log('queryImg:', queryImg)
+
     return (
         <div className={styles.listVideo}>
             <div  className={styles.queryResult}>
