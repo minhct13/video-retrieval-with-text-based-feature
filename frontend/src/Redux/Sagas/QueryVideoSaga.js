@@ -1,14 +1,13 @@
 import { all, put, call, takeEvery, select } from 'redux-saga/effects'
 import { v4 as uuidv4 } from 'uuid'
 import { getVideoAction, getSuggestion } from '../Actions/QueryVideoActions'
-import { setLoading, setListVideo, setSuggesstion, setCountQuery, setQuery } from '../slices/QueryVideoSlice'
+import { setLoading, setListVideo, setSuggesstion, setCountQuery, setQuery , setQueryImg} from '../slices/QueryVideoSlice'
 import { Service } from '../../Services/QueryVideoServices'
 import { toast } from 'react-toastify'
 
 function* handleGetVideosApi(action) {
     yield put(setLoading(true))
     try {
-        console.log('action.payload:', action.payload)
         const res = yield call(Service.getVideosApi, action.payload.formData)
         if (res.data && res.data.data) {
             let { countQuery } = yield select(state => state.queryVideoSlice)
@@ -18,7 +17,11 @@ function* handleGetVideosApi(action) {
             })
             yield put(setListVideo(res.data.data))
             yield put(setCountQuery(countQuery))
-            yield put(setQuery(action.payload.query))
+            if( action.payload.isSetQueryImage){
+                yield put(setQueryImg(action.payload.query))
+            }else{
+                yield put(setQuery(action.payload.query))
+            }
         }
         yield put(setLoading(false))
     } catch (error) {

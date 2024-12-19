@@ -27,14 +27,14 @@ class Config():
     SQLALCHEMY_POOL_RECYCLE = 300 # 5 mins                                            
     SQLALCHEMY_ECHO = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    CHECKPOINT_PATH = "pretrain_clipvip_base_16.pt"
+    CHECKPOINT_PATH = "pretrain_clipvip_base_16.pt"       
     SQLALCHEMY_ENGINE_OPTIONS  = {
         "pool_pre_ping": True,
         "pool_size": 10,
         "max_overflow": 10,
         "pool_recycle": SQLALCHEMY_POOL_RECYCLE
     }
-    VIDEO_URL="https://9e14-2405-4802-80ec-2fa0-ad93-1922-66ea-1d1a.ngrok-free.app"
+    VIDEO_URL="https://dfe3-183-80-33-91.ngrok-free.app"
 
 class DevelopmentConfig(Config):
     MINIO_SECURE = False

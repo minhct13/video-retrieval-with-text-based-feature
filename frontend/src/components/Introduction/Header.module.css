@@ -21,7 +21,7 @@
     border-radius: 5px;
     backdrop-filter: blur(14px);
     background-color: rgba(255, 255, 255, 0.2);
-    width: 45%;
+    width: 54%;
     border-radius: 10px;
     margin-left: 2rem;
     padding: 1rem 2rem;
@@ -35,6 +35,7 @@
 .des {
     text-align: left;
     font-size: 14px;
+    margin-top: 0;
 }
 
 @media only screen and (max-width: 1448px) {
@@ -80,6 +81,25 @@
         margin-left: auto;
         margin-right: auto;
     }
+}
+.info{
+    display: flex;
+    justify-content: space-between;
+}
+.info >div{
+    width: 50%;
+}
+.infoStudent >div{
+    width: 90%;
+    margin-left: auto;
+}
+.infoStudent >div >p{
+    text-align: left;
+    margin:5px 0px;
+}
+.label{
+    width: 80px;
+    display: inline-block;
 }
 @media only screen and (max-width: 500px) {
     .container {

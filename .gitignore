@@ -5,7 +5,7 @@ __pycache__/
 
 # C extensions
 *.so
-
+*data/
 # Distribution / packaging
 .Python
 build/
@@ -25,7 +25,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-
+*.jpg
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -61,7 +61,7 @@ cover/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-
+*.npz
 # Flask stuff:
 instance/
 .webassets-cache

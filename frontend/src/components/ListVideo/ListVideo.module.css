@@ -37,6 +37,9 @@
     display: flex;
     margin-left: 1%;
 }
+.queryResult{
+    margin-bottom: 1rem;
+}
 @media only screen and (max-width: 1024px) {
     .item {
         width: 23%;
