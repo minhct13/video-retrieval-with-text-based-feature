@@ -81,6 +81,24 @@
         margin-right: auto;
     }
 }
+.info{
+    display: flex;
+    justify-content: space-between;
+}
+.info >div{
+    width: 50%;
+}
+.infoStudent >div{
+    width: 90%;
+    margin-left: auto;
+}
+.infoStudent >div >p{
+    text-align: left;
+}
+.label{
+    width: 80px;
+    display: inline-block;
+}
 @media only screen and (max-width: 500px) {
     .container {
         height: 100%;

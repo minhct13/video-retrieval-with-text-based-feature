@@ -7,9 +7,23 @@ function Introduction() {
       <div className={styles.container}>
         <div className={styles.content}>
           <div className={styles.contentContainer}>
-            <p className={styles.title}>MASTER OF COMPUTER SCIENCE THESIS
-              CONTENT-BASED TEXT-TO-VIDEO RETRIEVAL WITH SEMANTIC TEXT FEATURES</p>
-            <p className={styles.des}>This work aims to research and develop an application that facilitates the retrieval of videos from a large video corpus using text queries. The proposed system leverages semantic text features to enhance the accuracy and relevance of the search results. By taking advantage of large language models (LLMs) such as GPT-4 to generate and interpret descriptive text features, the application can understand and interpret the context and meaning of the input text, thereby providing more precise video matches. The system is designed to handle diverse video content, making it applicable to various domains such as education, entertainment, and information retrieval. Experimental results show promising improvements in video retrieval performance compared to traditional keyframe-based methods. This thesis contributes to the field of content-based video retrieval by offering a novel solution that bridges the gap between textual information and visual content.</p>
+            <p className={styles.title}>Facial Vỉdeo Retrieval System</p>
+            <div className={styles.info}>
+              <div>
+                <p className={styles.des}>The Facial Video Retrieval System is a cutting-edge solution designed to efficiently retrieve and analyze facial data from video sources. This system utilizes advanced algorithms and techniques to extract, process, and index facial information from video streams, enabling users to search and retrieve specific facial features or identities quickly and accurately.</p>
+              </div>
+              <div className={styles.infoStudent}>
+                <div>
+                  <p><span className={styles.label}>HV:</span> Trần Công Minh - CH210101011</p>
+                  <p><span className={styles.label}>GVHD:</span> TS.Mai Tiến Dũng</p>
+                  <p><span className={styles.label}>GVPB 1:</span> TS.Dương Việt Hằng</p>
+                  <p><span className={styles.label}>GVPB 2:</span> Nguyễn Ngọc Thảo</p>
+                </div>
+
+              </div>
+            </div>
+
+
           </div>
         </div>
       </div>

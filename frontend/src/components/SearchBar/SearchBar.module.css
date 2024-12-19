@@ -13,6 +13,12 @@
     flex-wrap: wrap;
 }
 
+.customModal {
+    width: 400px;
+    background-color: #2f2f2f !important;
+    border-radius: 5px;
+}
+
 .container {
     display: flex;
     width: 60%;
@@ -57,12 +63,15 @@
     width: 2rem;
     height: 2rem;
 }
-.div_previewImg{
-    margin-top: 1rem;
+
+.div_previewImg {
+    margin-top: 2rem;
 }
+
 .previewImg {
-    height: 10rem;
-    width: auto;
+    height: auto;
+    width: 100%;
+    object-fit: cover;
 }
 
 .listPreviewBtn {
@@ -93,6 +102,25 @@
 .sendBtn {
     background-color: #1f1f1f;
     color: white;
+}
+.closeIcon{
+    color:#9b9b9b;
+    font-size: 22px;
+}
+.imgSearch {
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    margin-top: 1rem;
+    border-bottom: 1px solid rgba(155, 155, 155, 1);
+    padding-bottom: 4px;
+    color: #9b9b9b;
+    font-size: 14px;
+}
+
+.imgSearch:focus {
+    outline: none;
+    /* color: rgba(155, 155, 155, 1); */
 }
 
 @media only screen and (max-width: 768px) {

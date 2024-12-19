@@ -1,21 +1,33 @@
 import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
     keySearch: '',
+    queryImg:'',
     videos: [],
     suggesstions: [],
     isLoading: false,
     countQuery:0,
     query:'',
-    mode:'text'
+    mode:'text',
+    file:null
 }
 
 const queryVideoSlice = createSlice({
     name: 'aboutMeSlice',
     initialState,
     reducers: {
+        setFile: (state, action) => {
+            let newState = { ...state }
+            newState.file = action.payload
+            return newState
+        },
         setKeySearch: (state, action) => {
             let newState = { ...state }
             newState.keySearch = action.payload
+            return newState
+        },
+        setQueryImg: (state, action) => {
+            let newState = { ...state }
+            newState.queryImg = action.payload
             return newState
         },
         setListVideo: (state, action) => {
@@ -51,5 +63,5 @@ const queryVideoSlice = createSlice({
     },
 });
 const { reducer } = queryVideoSlice;
-export const { setKeySearch, setListVideo, setSuggesstion, setLoading, setCountQuery, setQuery, setMode } = queryVideoSlice.actions;
+export const { setKeySearch, setListVideo, setSuggesstion, setLoading, setCountQuery, setQuery, setMode, setQueryImg, setFile } = queryVideoSlice.actions;
 export default reducer;

@@ -28,6 +28,18 @@
     text-align: center;
     margin-bottom: 2rem;
 }
+.previewImg{
+    width: 70px;
+    height: auto;
+    object-fit: cover;
+}
+.queryResultImg{
+    display: flex;
+    margin-left: 1%;
+}
+.queryResult{
+    margin-bottom: 1rem;
+}
 @media only screen and (max-width: 1024px) {
     .item {
         width: 23%;

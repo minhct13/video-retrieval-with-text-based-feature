@@ -4,7 +4,7 @@ from torch.nn import functional as F
 import numpy as np
 from easydict import EasyDict as edict
 
-
+from marlin.src.marlin_pytorch import Marlin
 from transformers.models.clip.configuration_clip import CLIPConfig, CLIPTextConfig, CLIPVisionConfig
 from transformers import CLIPProcessor, CLIPTokenizerFast, AutoProcessor
 from clipvip.CLIP_VIP import CLIPModel, clip_loss
@@ -29,6 +29,7 @@ class EncoderService:
         self.clipconfig.vision_additional_config = self.extraCfg
         self.model = CLIPModel(config=self.clipconfig).to(self.device)
         self.model.load_state_dict(self.cleanDict)
+        self.marlin_model = Marlin.from_file("marlin_vit_base_ytf", "marlin_vit_base_ytf.encoder.pt")
 
 
     def read_video_pyav(self, container, indices):
@@ -79,3 +80,6 @@ class EncoderService:
             video_embedding = frame_features.mean(dim=0, keepdim=True).cpu().numpy().flatten()
         return video_embedding
 
+    def encode_image(self, image):
+        image_feature = self.marlin_model.extract_image(image)
+        return image_feature

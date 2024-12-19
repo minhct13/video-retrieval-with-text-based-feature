@@ -6,13 +6,27 @@ import Skeleton from '../../components/Skeleton/Skeleton'
 
 function ListVideo(props) {
     const { videos } = props
-    const { isLoading, countQuery, query } = useSelector((state) => state.queryVideoSlice)
+    const { isLoading, countQuery, query, queryImg, file } = useSelector((state) => state.queryVideoSlice)
 
     return (
         <div className={styles.listVideo}>
-            {
-                countQuery > 0 && <p className={styles.resultQuery}>Results for: {query} </p>
-            }
+            <div  className={styles.queryResult}>
+                {
+                    countQuery > 0 && <>
+                        <p className={styles.resultQuery}>Results for: {query} {queryImg}</p>
+                        {
+                            file && <div className={styles.queryResultImg}>
+                                <img
+                                    className={styles.previewImg}
+                                    src={file ? URL.createObjectURL(file) : null}
+                                    alt='image preview'
+                                />
+                            </div>
+                        }
+                    </>
+                }
+            </div>
+
             <div className={styles.container}>
                 {
                     isLoading ? (

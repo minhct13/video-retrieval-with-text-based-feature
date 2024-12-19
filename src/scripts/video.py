@@ -3,21 +3,20 @@ from flask_sqlalchemy import SQLAlchemy
 import uuid
 from pgvector.sqlalchemy import Vector
 import av
+import numpy as np
 import torch
 from torch.nn import functional as F
-import numpy as np
 from easydict import EasyDict as edict
 from transformers.models.clip.configuration_clip import CLIPConfig, CLIPTextConfig, CLIPVisionConfig
 from transformers import CLIPProcessor, CLIPTokenizerFast, AutoProcessor
 from PIL import Image
 # from clipvip.CLIP_VIP import CLIPModel, clip_loss
 # from transformers import AutoProcessor, CLIPModel
-import torch
-import json
 import argparse
-from sklearn.metrics.pairwise import cosine_similarity
+# from sklearn.metrics.pairwise import cosine_similarity
 from clipvip.CLIP_VIP import CLIPModel as CLIP_VIP_Model, clip_loss
 from transformers import AutoProcessor, CLIPModel as Huggingface_CLIPModel
+import json
 
 
 app = Flask(__name__)
@@ -31,7 +30,8 @@ class Video(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, unique=True, index=True, nullable=False)
     path = db.Column(db.String, unique=True, nullable=False)
-    video_vector = db.Column(Vector(512), nullable=False)
+    video_vector = db.Column(Vector(512), nullable=True)
+    face_video_vector = db.Column(Vector(768), nullable=True)
     text_vector_1 = db.Column(Vector(512), nullable=False)
     text_vector_2 = db.Column(Vector(512), nullable=False)
     text_vector_3 = db.Column(Vector(512), nullable=False)
@@ -42,6 +42,7 @@ class Video(db.Model):
     text_prob_3 = db.Column(db.Float, nullable=False)
     text_prob_4 = db.Column(db.Float, nullable=False)
     text_prob_5 = db.Column(db.Float, nullable=False)
+    problem = db.Column(db.String, nullable=True)
 
     def __repr__(self):
         return f"<Video {self.name}>"
@@ -148,7 +149,7 @@ class EncoderService:
         return video_embedding
 
 
-def get_keyframe_vectors(video_path, video_name, cache_dir, model, processor):
+def get_keyframe_vectors(video_path, video_name, cache_dir, model, processor=None):
     # Define the cache path and check if vectors have been cached already
     cache_path = os.path.join(cache_dir, f"{video_name}_keyframes.npz")
     if os.path.exists(cache_path):
@@ -213,13 +214,19 @@ def load_ground_truth(file_path):
 
 
 def fetch_video_data(session, limit):
-    videos = session.query(Video).all()
+    videos = session.query(Video).filter(
+        Video.face_video_vector != None,
+        Video.video_vector != None
+    ).all()
+
     video_vectors = []
     text_vectors = []
     text_probs = []
     video_names = []
+    video_face_vectors = []
 
     for video in videos:
+        video_face_vectors.append(video.face_video_vector)
         video_vectors.append(video.video_vector)
         text_vectors.append([
             video.text_vector_1,
@@ -239,7 +246,7 @@ def fetch_video_data(session, limit):
         if len(video_names) == limit:
             break
     
-    return np.array(video_vectors), np.array(text_vectors), np.array(text_probs), video_names
+    return np.array(video_vectors), np.array(text_vectors), np.array(text_probs), np.array(video_face_vectors), video_names
 
 def get_top_k_retrieved(text_embedding, video_embeddings, k=10):
     similarities = cosine_similarity([text_embedding], video_embeddings)[0]
@@ -320,4 +327,30 @@ def load_keyframe_text_embeddings(cache_file):
     if os.path.exists(cache_file):
         with np.load(cache_file) as data:
             return data['text_embeddings']
+    return None
+
+
+def cache_embeddings(cache_file, cache):
+    """
+    Save dynamic key text embeddings to a compressed NPZ file.
+    
+    Args:
+        cache_file (str): The path to the file where embeddings will be cached.
+        **kwargs: Key-value pairs where the key is a string identifier and the value is the embedding.
+    """
+    np.savez_compressed(cache_file, **cache)
+
+def load_embeddings(cache_file):
+    """
+    Load a dictionary of text embeddings from a compressed NPZ file.
+    
+    Args:
+        cache_file (str): The path to the file where embeddings are cached.
+    
+    Returns:
+        dict: A dictionary with dynamic keys and their corresponding embeddings, or None if the cache does not exist.
+    """
+    if os.path.exists(cache_file):
+        with np.load(cache_file, allow_pickle=True) as data:
+            return {key: data[key] for key in data}
     return None

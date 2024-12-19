@@ -26,6 +26,8 @@ class Video(db.Model):
     text_prob_3 = db.Column(db.Float, nullable=False)
     text_prob_4 = db.Column(db.Float, nullable=False)
     text_prob_5 = db.Column(db.Float, nullable=False)
-
+    problem = db.Column(db.String, nullable=True)
+    face_video_vector = db.Column(Vector, nullable=True)
+    
     def __repr__(self):
         return f"<Video {self.name}>"

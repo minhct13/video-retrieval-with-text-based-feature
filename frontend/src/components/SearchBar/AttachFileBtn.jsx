@@ -1,18 +1,28 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
+// import { useDispatch } from 'react-redux'
+import { toast } from 'react-toastify'
 import { GrAttachment } from "react-icons/gr"
 import styles from './SearchBar.module.css'
 import PopupConfirmImage from './PopupConfirmImage'
+// import { setFile} from '../../Redux/slices/QueryVideoSlice'
 
 const AttachFileBtn = () => {
+    // const dispatch = useDispatch()
     const [isOpenConfirm, setIsOpenConfirm] = useState(false)
     const [file, setFile] = useState(null)
+    // const { file } = useSelector((state) => state.queryVideoSlice)
+
     const handleImageChange = (event) => {
         const file = event.target.files[0]
-        const { target = {} } = event || {};
-        target.value = "";
-        if (file && file.type.includes('image')) {
-            setFile(file)
-            setIsOpenConfirm(true)
+        if (file.size > 512000) {
+            toast('Please upload images smaller than 500KB')
+        } else {
+            const { target = {} } = event || {};
+            target.value = "";
+            if (file && file.type.includes('image')) {
+                setFile(file)
+                setIsOpenConfirm(true)
+            }
         }
     }
     return (
@@ -29,8 +39,8 @@ const AttachFileBtn = () => {
             <PopupConfirmImage
                 isOpen={isOpenConfirm}
                 setOpen={setIsOpenConfirm}
-                file={file}
-                setFile={setFile}
+                fileState={file}
+                setFileState={setFile}
             />
         </>
     );
