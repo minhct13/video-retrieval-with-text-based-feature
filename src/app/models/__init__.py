@@ -17,7 +17,7 @@ def create_database_schema(db_uri: str, schemas: list = []):
 
 db = SQLAlchemy()
 
-from .video import Video
+from .video import Video, VideoKeyframe
 
 
 __all__ = ["video"]

@@ -1,3 +1,6 @@
+deepface
+tf-keras==2.15.0
+keras==2.15.0
 ffmpeg-python
 einops
 yt-dlp
@@ -33,7 +36,6 @@ gevent==22.10.2
 XlsxWriter==3.1.2
 Werkzeug==2.2.2
 oauthlib==3.0.1
-av
 transformers
 torch
 easydict

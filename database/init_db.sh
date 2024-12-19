@@ -1,31 +1,55 @@
 #!/bin/bash
 
-# Wait for the database to be ready
-# until docker exec database pg_isready -U user -d database; do
-#   echo "Waiting for database to be ready..."
-#   sleep 5
-# done
+# Script to initialize or update the PostgreSQL database schema for the videos and video_keyframes tables
 
-# Initialize the database schema
-docker exec -i database psql -U user -d postgres <<EOF
+# Database connection details (update as needed)
+DB_CONTAINER="database"  # Docker container name for the database
+DB_USER="user"           # Database username
+DB_NAME="postgres"       # Database name
+DB_EXTENSION="vector"    # Required PostgreSQL extension
+
+echo "Initializing the database schema..."
+
+# Check if the database is ready
+until docker exec "$DB_CONTAINER" pg_isready -U "$DB_USER" -d "$DB_NAME"; do
+  echo "Waiting for the database to be ready..."
+  sleep 5
+done
+
+echo "Database is ready. Updating schema..."
+
+# Update the database schema
+docker exec -i "$DB_CONTAINER" psql -U "$DB_USER" -d "$DB_NAME" <<EOF
+-- Enable the vector extension if not already enabled
 CREATE EXTENSION IF NOT EXISTS vector;
 
+-- Drop the existing videos table if it exists
+DROP TABLE IF EXISTS videos;
+
+-- Drop the existing video_keyframes table if it exists
+DROP TABLE IF EXISTS video_keyframes;
+
+-- Create the new videos table
 CREATE TABLE videos (
     id SERIAL PRIMARY KEY,
     name VARCHAR UNIQUE NOT NULL,
     path VARCHAR UNIQUE NOT NULL,
-    video_vector vector(512) NOT NULL,
-    text_vector_1 vector(512),
-    text_vector_2 vector(512),
-    text_vector_3 vector(512),
-    text_vector_4 vector(512),
-    text_vector_5 vector(512),
-    text_prob_1 FLOAT,
-    text_prob_2 FLOAT,
-    text_prob_3 FLOAT,
-    text_prob_4 FLOAT,
-    text_prob_5 FLOAT
+    dataset VARCHAR
 );
+
+-- Create the video_keyframes table with a foreign key reference to the videos table
+CREATE TABLE video_keyframes (
+    id SERIAL PRIMARY KEY,
+    video_id INTEGER NOT NULL REFERENCES videos(id) ON DELETE CASCADE,
+    frame_index INTEGER NOT NULL,
+    marlin_video_vector vector(512),  -- Using vector type (size 512)
+    clip_vip_vector vector(512),      -- Using vector type (size 512)
+    UNIQUE(video_id, frame_index)
+);
+
+-- Confirm table creation
+\\dt videos
+\\dt video_keyframes
 EOF
 
-echo "Database initialized."
+echo "Schema updated successfully."

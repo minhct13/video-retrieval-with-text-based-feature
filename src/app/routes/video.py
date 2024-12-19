@@ -11,7 +11,7 @@ video_bp = Blueprint('video_bp', __name__)
 def query():
     # body = request.get_json()
     query = request.form.get("query", None)
-    top_n = request.form.get("top_n", 50)
+    top_n = request.form.get("top_n", 5)
     try:
         # Convert to a PIL image
         image = Image.open(request.files.get("image", None))

@@ -9,7 +9,7 @@ def is_file(data):
         return False
     return True
 
-def get_link(foledr_id, folder_path = "", page = 1, per_page = 50):
+def get_link(foledr_id, folder_path = "", page = 1, per_page = 20):
     url = f"https://www.fshare.vn/api/v3/files/folder?linkcode={foledr_id}&sort=type,name&page={page}&per-page={per_page}"
     
     payload={}

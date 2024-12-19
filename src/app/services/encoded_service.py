@@ -1,4 +1,3 @@
-import av
 import torch
 from torch.nn import functional as F
 import numpy as np
@@ -8,7 +7,7 @@ from marlin.src.marlin_pytorch import Marlin
 from transformers.models.clip.configuration_clip import CLIPConfig, CLIPTextConfig, CLIPVisionConfig
 from transformers import CLIPProcessor, CLIPTokenizerFast, AutoProcessor
 from clipvip.CLIP_VIP import CLIPModel, clip_loss
-
+from deepface import DeepFace
 
 class EncoderService:
     def init_app(self, checkpoint=""):
@@ -81,5 +80,6 @@ class EncoderService:
         return video_embedding
 
     def encode_image(self, image):
-        image_feature = self.marlin_model.extract_image(image)
+        # image_feature = self.marlin_model.extract_image(image)
+        image_feature = DeepFace.represent(np.array(image), model_name="Facenet512", enforce_detection = True)[0]['embedding']
         return image_feature

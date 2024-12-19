@@ -34,8 +34,8 @@ class Config():
         "max_overflow": 10,
         "pool_recycle": SQLALCHEMY_POOL_RECYCLE
     }
-    VIDEO_URL="https://dfe3-183-80-33-91.ngrok-free.app"
-
+    # VIDEO_URL="https://ce75-183-80-33-91.ngrok-free.app"
+    VIDEO_URL="http://localhost:3001/faces"
 class DevelopmentConfig(Config):
     MINIO_SECURE = False
 

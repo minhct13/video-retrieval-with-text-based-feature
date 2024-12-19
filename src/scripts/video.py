@@ -17,36 +17,70 @@ import argparse
 from clipvip.CLIP_VIP import CLIPModel as CLIP_VIP_Model, clip_loss
 from transformers import AutoProcessor, CLIPModel as Huggingface_CLIPModel
 import json
-
+from sqlalchemy import Column, Integer, Float, String, ForeignKey
+from sqlalchemy.orm import relationship
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:1234@localhost/videodb'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+class VideoKeyframe(db.Model):
+    __tablename__ = "video_keyframes"
+    id = Column(Integer, primary_key=True)
+    video_id = Column(Integer, ForeignKey("videos.id"))
+    frame_index = Column(Integer, nullable=False)
+    marlin_video_vector = Column('marlin_video_vector', Vector(512))  # Using vector type (size 768)
+    clip_vip_vector = Column('clip_vip_vector', Vector(512))  # Using vector type (size 512)
+
+    video = relationship("Video", back_populates="keyframes")
 
 class Video(db.Model):
-    __tablename__ = 'videos'
+    __tablename__ = "videos"
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True, nullable=False)
+    path = Column(String, nullable=False)
+    dataset = Column(String)
+    keyframes = relationship("VideoKeyframe", back_populates="video")
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String, unique=True, index=True, nullable=False)
-    path = db.Column(db.String, unique=True, nullable=False)
-    video_vector = db.Column(Vector(512), nullable=True)
-    face_video_vector = db.Column(Vector(768), nullable=True)
-    text_vector_1 = db.Column(Vector(512), nullable=False)
-    text_vector_2 = db.Column(Vector(512), nullable=False)
-    text_vector_3 = db.Column(Vector(512), nullable=False)
-    text_vector_4 = db.Column(Vector(512), nullable=False)
-    text_vector_5 = db.Column(Vector(512), nullable=False)
-    text_prob_1 = db.Column(db.Float, nullable=False)
-    text_prob_2 = db.Column(db.Float, nullable=False)
-    text_prob_3 = db.Column(db.Float, nullable=False)
-    text_prob_4 = db.Column(db.Float, nullable=False)
-    text_prob_5 = db.Column(db.Float, nullable=False)
-    problem = db.Column(db.String, nullable=True)
+def save_video_keyframe_embeddings(session, video_name, video_path, dataset, keyframe_data):
+    # Check if the video already exists
+    video = session.query(Video).filter(Video.name == video_name).first()
+    if not video:
+        # Create a new video record
+        video = Video(name=video_name, path=video_path, dataset=dataset)
+        session.add(video)
+        session.commit()
 
-    def __repr__(self):
-        return f"<Video {self.name}>"
+    # Add keyframe data
+    for frame_index, embeddings in keyframe_data.items():
+        keyframe = VideoKeyframe(
+            video_id=video.id,
+            frame_index=frame_index,
+            marlin_video_vector=embeddings.get("marlin_video_vector"),
+            clip_vip_vector=embeddings.get("clip_vip_vector")
+        )
+        session.add(keyframe)
 
+    session.commit()
+
+from sqlalchemy import create_engine
+
+def setup_database():
+    """
+    Sets up the database connection using SQLAlchemy.
+    Returns the SQLAlchemy engine.
+    """
+    # Replace with your actual database connection string
+    DATABASE_URL = "postgresql://user:user@localhost:5432/postgres"
+
+    try:
+        # Create an SQLAlchemy engine
+        engine = create_engine(DATABASE_URL)
+        print("Database connection established successfully.")
+        return engine
+    except Exception as e:
+        print(f"Error setting up the database connection: {e}")
+        raise
 
 class EncoderService:
     def init_app(self, checkpoint=""):
